@@ -4,11 +4,6 @@ import pytest
 from conftest import ler_casos
 
 from veiculosbr import (
-    chassi_ano_modelo,
-    chassi_digito9_confere,
-    chassi_fabricante,
-    chassi_pais,
-    chassi_valido,
     fipe_por_placa,
     placa_formatar,
     placa_para_antiga,
@@ -16,11 +11,10 @@ from veiculosbr import (
     placa_tipo,
     placa_uf,
     placa_valida,
-    renavam_limpar,
     renavam_valido,
-    semelhanca,
 )
-from veiculosbr.robots import pode_visitar
+from veiculosbr.renavam import renavam_limpar
+from veiculosbr.semelhanca import semelhanca
 
 
 @pytest.mark.parametrize("caso", ler_casos("placa.json"), ids=lambda caso: str(caso["placa"]))
@@ -40,25 +34,9 @@ def test_renavam(caso):
     assert renavam_valido(caso["renavam"]) == caso["valido"]
 
 
-@pytest.mark.parametrize("caso", ler_casos("chassi.json"),
-                         ids=lambda caso: f"{caso['chassi']}-{caso['ano_referencia']}")
-def test_chassi(caso):
-    chassi = caso["chassi"]
-    assert chassi_valido(chassi) == caso["valido"]
-    assert chassi_pais(chassi) == caso["pais"]
-    assert chassi_fabricante(chassi) == caso["fabricante"]
-    assert chassi_digito9_confere(chassi) == caso["digito9_confere"]
-    assert chassi_ano_modelo(chassi, caso["ano_referencia"]) == caso["ano_modelo"]
-
-
 @pytest.mark.parametrize("caso", ler_casos("semelhanca.json"), ids=lambda caso: f"{caso['placa']}~{caso['fipe']}")
 def test_semelhanca(caso):
     assert semelhanca(caso["placa"], caso["fipe"]) == caso["semelhanca"]
-
-
-@pytest.mark.parametrize("caso", ler_casos("robots.json"), ids=lambda caso: caso["descricao"])
-def test_robots(caso):
-    assert pode_visitar(caso["robots"], caso["caminho"]) == caso["pode"]
 
 
 @pytest.mark.parametrize("caso", ler_casos("fipe_por_placa.json"), ids=lambda caso: caso["descricao"])

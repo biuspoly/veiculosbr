@@ -1,7 +1,7 @@
 # veiculosbr
 
 Pacotes de dados de veículo brasileiros, **um em R e um em Python, com o mesmo comportamento**: placa
-(antiga e Mercosul), RENAVAM, chassi e preço FIPE, inclusive a partir da placa. Projeto pessoal do
+(antiga e Mercosul), RENAVAM e preço FIPE, inclusive a partir da placa. Projeto pessoal do
 Marlon (biuspoly), parte do portfólio dele. O site de portfólio (`biuspoly/portfolio`, Shiny for Python,
 dados sintéticos) é outro repositório e vai ganhar uma página que usa estes pacotes.
 
@@ -34,16 +34,20 @@ Testar:
 - **Toda documentação diz de onde vem o dado** (pedido do usuário): a seção "De onde vêm os dados" do README
   e do `?veiculosbr`, `@source` nas funções, `fonte`/`origem` em todo resultado que vem da internet, e
   `dados/LEIAME.md` para as tabelas. Fonte nova = linha nova nas três.
-- **Fonte de dados só se permitir.** Respeitar o `robots.txt` e nunca contornar Cloudflare, captcha ou
-  bloqueio, nem com navegador sem tela, nem procurando API escondida no JavaScript do site. A lista de fontes
-  aceitas e recusadas fica em `docs/plano.md`.
+- **Nunca contornar Cloudflare, captcha ou bloqueio**, nem com navegador sem tela, nem procurando API
+  escondida no JavaScript do site. A conferência do `robots.txt` saiu do pacote (decisão do usuário,
+  26/10/2026); a lista de fontes aceitas e recusadas fica em `docs/plano.md`.
+- **Nada é gravado em disco** (decisão do usuário: "é consulta, não quero salvar nada"). Só a memória da
+  sessão, para não repetir a mesma consulta.
+- **Lista pública enxuta**: 13 funções, as mesmas nas duas linguagens (veja o README). Peça interna fica
+  interna; função nova pública só se o usuário pedir.
 - **FIPE pela placa pode estar errada, e o pacote diz isso.** Todo resultado traz a fonte, a confiança e
   TODOS os candidatos de FIPE quando houver mais de um, nunca só o "melhor".
 - **Não gastar cota nem paciência dos sites.** A busca por placa do Parallelum dá 5 consultas por mês sem
   token (a de outubro/2026 já foi gasta em 26/10): nunca usar em teste nem em experimento sem o usuário
   pedir. O tabelafipebrasil.com limita por IP: desenvolver com as respostas gravadas e consultar ao vivo no
   máximo uma vez para conferir. Para gravar respostas novas do catálogo (que é folgado, 1.000/dia):
-  `VEICULOSBR_CACHE=0 VEICULOSBR_GRAVAR_RESPOSTAS=<caminho>/casos/respostas`.
+  `VEICULOSBR_GRAVAR_RESPOSTAS=<caminho>/casos/respostas`.
 - **CRAN:** strings do código R só em ASCII, com `\u00e3` no lugar do acento (comentário e roxygen podem
   ter acento). Cuidado: a ferramenta de escrita de arquivo transforma `\u00e3` na própria letra; depois de
   escrever um `.R`, conferir com `R CMD check` (ou `tools::showNonASCIIfile`). Caminho de arquivo dentro do

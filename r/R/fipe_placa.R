@@ -16,17 +16,29 @@ ORIGEM_BUSCA_NO_CATALOGO = "busca por semelhan\u00e7a no cat\u00e1logo FIPE"
 #' Preço FIPE a partir da placa
 #'
 #' O caminho:
-#' 1. a placa vai às fontes ([placa_consultar()]) e volta o veículo: marca,
+#' 1. a placa vai às fontes (abaixo) e volta o veículo: marca,
 #'    modelo, ano e, às vezes, os códigos FIPE que a fonte achou;
 #' 2. com `conferir = TRUE`, cada código da fonte é procurado no catálogo FIPE
 #'    no ano-modelo do veículo (o preço do catálogo vem com o mês de referência);
 #' 3. se a fonte não trouxe nenhum código, o pacote procura no catálogo os
-#'    modelos da mesma marca e ano com nome parecido ([semelhanca()]) e devolve
+#'    modelos da mesma marca e ano com nome parecido e devolve
 #'    todos os que ficam perto do melhor ([fipe_candidatos()]).
 #'
 #' Sem o ano-modelo (só o de fabricação), procura nos dois anos possíveis: o
 #' veículo fabricado em 2017 pode ser modelo 2017 ou 2018. Sem o tipo (carro,
 #' moto ou caminhão), escolhe o tipo em que a marca e o modelo mais se parecem.
+#'
+#' As fontes do veículo pela placa, tentadas na ordem de `fontes`:
+#' - `"tabelafipebrasil"` (padrão): a página pública
+#'   `https://www.tabelafipebrasil.com/placa/<placa>`. O pacote espera 3
+#'   segundos entre consultas e, se o site recusar (limite de consultas), fica
+#'   10 minutos sem consultá-lo.
+#' - `"parallelum"` (só quando pedida): a busca por placa da API do Parallelum,
+#'   em teste. A cota é de 5 consultas por mês sem token e 10 com o token
+#'   gratuito (`VEICULOSBR_FIPE_TOKEN`); o pacote avisa quantas sobraram.
+#'
+#' Nenhuma das duas é oficial (nem Senatran, nem Detran, nem FIPE). Placa com o
+#' cadastro errado ou desatualizado na origem vem errada aqui também.
 #'
 #' **O nome do modelo no cadastro da placa raramente é igual ao da FIPE.** Por
 #' isso todo candidato diz de onde veio (`origem`), a `confianca` e a nota de
@@ -37,7 +49,7 @@ ORIGEM_BUSCA_NO_CATALOGO = "busca por semelhan\u00e7a no cat\u00e1logo FIPE"
 #' - `"baixa"`: o código veio da busca por semelhança no catálogo.
 #'
 #' @param placa Uma placa.
-#' @param fontes As fontes de placa, na ordem (veja [placa_consultar()]).
+#' @param fontes As fontes de placa, na ordem: `"tabelafipebrasil"` e/ou `"parallelum"`.
 #' @param conferir Conferir no catálogo FIPE os códigos que a fonte indicou.
 #' @param maximo_candidatos Quantos candidatos, no máximo, a busca por
 #'   semelhança devolve.
@@ -132,7 +144,7 @@ fipe_por_placa = function(placa, fontes = "tabelafipebrasil", conferir = TRUE,
 #' @param ano_modelo O ano-modelo.
 #' @param combustivel O combustível, se souber (ajuda a escolher o ano certo).
 #' @param maximo_candidatos Quantos candidatos, no máximo.
-#' @param semelhanca_minima A nota mínima de [semelhanca()].
+#' @param semelhanca_minima A nota mínima de semelhança (de 0 a 1).
 #' @return Um `data.frame` com as colunas de candidatos de [fipe_por_placa()].
 #' @source <https://fipe.parallelum.com.br/api/v2>.
 #' @examples

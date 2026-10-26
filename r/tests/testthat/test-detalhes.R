@@ -21,8 +21,8 @@ test_that("nome do arquivo gravado igual ao do Python", {
     "parallelum_cars_brands"
   )
   expect_identical(
-    nome_do_arquivo_gravado("https://www.tabelafipebrasil.com/robots.txt"),
-    "tabelafipebrasil_robots.txt"
+    nome_do_arquivo_gravado("https://www.tabelafipebrasil.com/placa/ZZA1B23"),
+    "tabelafipebrasil_placa_ZZA1B23"
   )
 })
 

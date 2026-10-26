@@ -3,8 +3,7 @@
 Fonte: a API pública do Parallelum (https://fipe.parallelum.com.br/api/v2),
 que repete os dados da Fundação Instituto de Pesquisas Econômicas (FIPE).
 Sem token: 1.000 consultas por dia. Com o token gratuito de https://fipe.api.br
-na variável VEICULOSBR_FIPE_TOKEN, o limite sobe. As respostas ficam em cache
-por 7 dias: a FIPE só muda uma vez por mês.
+na variável VEICULOSBR_FIPE_TOKEN, o limite sobe.
 """
 
 from __future__ import annotations
@@ -19,7 +18,6 @@ from .semelhanca import palavras_do_nome
 
 ENDERECO_DA_API = "https://fipe.parallelum.com.br/api/v2"
 FONTE_DO_CATALOGO = "Tabela FIPE, pela API do Parallelum (fipe.parallelum.com.br)"
-VALIDADE_DO_CATALOGO_DIAS = 7
 TIPO_NA_API = {"carros": "cars", "motos": "motorcycles", "caminhoes": "trucks"}
 # Na FIPE, carro flex aparece como Gasolina (código 1).
 CODIGO_DO_COMBUSTIVEL = {"gasolina": "1", "flex": "1", "alcool": "2", "etanol": "2", "diesel": "3"}
@@ -139,7 +137,7 @@ def _tipo_na_api(tipo: str) -> str:
 def _consultar(caminho: str):
     token = os.environ.get("VEICULOSBR_FIPE_TOKEN", "")
     cabecalhos = {"X-Subscription-Token": token} if token else None
-    resposta = baixar(ENDERECO_DA_API + caminho, cabecalhos, validade_cache_dias=VALIDADE_DO_CATALOGO_DIAS)
+    resposta = baixar(ENDERECO_DA_API + caminho, cabecalhos)
     if resposta.status == 404:
         return []
     return json.loads(resposta.texto)

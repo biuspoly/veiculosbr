@@ -1,6 +1,8 @@
 # Toda consulta à internet passa por aqui: o robô se identifica, espera entre
-# duas consultas ao mesmo site, guarda as respostas num cache local e, nos
-# testes, lê respostas gravadas em vez de ir à rede (VEICULOSBR_RESPOSTAS_GRAVADAS).
+# duas consultas ao mesmo site e para de consultar um site que recusou. Nada é
+# gravado em disco: a mesma consulta feita de novo na mesma sessão sai da
+# memória, e some quando o R fecha. Nos testes, as respostas vêm de arquivos
+# (variável VEICULOSBR_RESPOSTAS_GRAVADAS).
 
 SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE = 3
 SEGUNDOS_DE_ESPERA_DA_RESPOSTA = 30
@@ -8,10 +10,10 @@ TENTATIVAS = 2
 SEGUNDOS_ANTES_DE_TENTAR_DE_NOVO = 2
 # Site que disse "chega" (HTTP 429 ou 403) fica sem consulta por este tempo.
 SEGUNDOS_DE_PAUSA_DEPOIS_DE_RECUSA = 600
-
 APELIDO_DO_SITE = c("fipe.parallelum.com.br" = "parallelum", "www.tabelafipebrasil.com" = "tabelafipebrasil")
 
 estado_da_rede = new.env(parent = emptyenv())
+estado_da_rede$respostas_desta_sessao = list()
 estado_da_rede$ultima_consulta = list()
 estado_da_rede$pausado_ate = list()
 
@@ -44,64 +46,23 @@ site_do_endereco = function(endereco) {
   sub("^https?://([^/]+).*$", "\\1", endereco)
 }
 
-pasta_do_cache = function() {
-  configurada = Sys.getenv("VEICULOSBR_CACHE")
-  if (configurada == "0") {
-    return(NULL)
-  }
-  if (configurada != "") {
-    return(configurada)
-  }
-  tools::R_user_dir("veiculosbr", which = "cache")
-}
-
-#' Apaga o cache local
-#'
-#' As respostas das consultas ficam guardadas na pasta de cache do usuário
-#' (`tools::R_user_dir("veiculosbr", "cache")`, ou a pasta da variável de
-#' ambiente `VEICULOSBR_CACHE`; `VEICULOSBR_CACHE=0` desliga o cache): o
-#' catálogo FIPE por 7 dias, as páginas de placa por 30.
-#'
-#' @return O número de arquivos apagados, invisível.
-#' @export
-limpar_cache = function() {
-  pasta = pasta_do_cache()
-  if (is.null(pasta) || !dir.exists(pasta)) {
-    return(invisible(0L))
-  }
-  arquivos = list.files(pasta, full.names = TRUE)
-  unlink(arquivos)
-  invisible(length(arquivos))
-}
-
-ler_arquivo_de_texto = function(arquivo) {
-  linhas = readLines(arquivo, encoding = "UTF-8", warn = FALSE)
-  paste(linhas, collapse = "\n")
-}
-
-gravar_arquivo_de_texto = function(texto, arquivo) {
-  dir.create(dirname(arquivo), recursive = TRUE, showWarnings = FALSE)
-  writeLines(enc2utf8(texto), arquivo, useBytes = TRUE)
-}
-
-baixar = function(endereco, cabecalhos = list(), validade_cache_dias = 0, respeitar_ritmo = FALSE) {
-  nome_gravado = nome_do_arquivo_gravado(endereco)
-
+baixar = function(endereco, cabecalhos = list(), respeitar_ritmo = FALSE) {
   pasta_gravadas = Sys.getenv("VEICULOSBR_RESPOSTAS_GRAVADAS")
   if (pasta_gravadas != "") {
-    arquivo = file.path(pasta_gravadas, nome_gravado)
+    arquivo = file.path(pasta_gravadas, nome_do_arquivo_gravado(endereco))
     if (!file.exists(arquivo)) {
       stop(erro_de_consulta(
-        paste0("Resposta n\u00e3o gravada para ", endereco, " (", nome_gravado, ")"),
+        paste0("Resposta n\u00e3o gravada para ", endereco, " (", basename(arquivo), ")"),
         "veiculosbr_resposta_nao_gravada"
       ))
     }
-    return(list(status = 200L, texto = ler_arquivo_de_texto(arquivo), cabecalhos = list()))
+    texto = paste(readLines(arquivo, encoding = "UTF-8", warn = FALSE), collapse = "\n")
+    return(list(status = 200L, texto = texto, cabecalhos = list()))
   }
 
-  arquivo_do_cache = arquivo_do_cache_valido(nome_gravado, validade_cache_dias)
-  if (!is.null(arquivo_do_cache)) {
-    return(list(status = 200L, texto = ler_arquivo_de_texto(arquivo_do_cache), cabecalhos = list()))
+  ja_consultada = estado_da_rede$respostas_desta_sessao[[endereco]]
+  if (!is.null(ja_consultada)) {
+    return(ja_consultada)
   }
 
   site = site_do_endereco(endereco)
@@ -139,16 +100,16 @@ baixar = function(endereco, cabecalhos = list(), validade_cache_dias = 0, respei
     stop(erro_de_consulta(paste0(endereco, " respondeu HTTP ", status)))
   }
 
-  # VEICULOSBR_GRAVAR_RESPOSTAS: consulta de verdade, guardada para os testes.
+  # Só para quem desenvolve o pacote: VEICULOSBR_GRAVAR_RESPOSTAS guarda a resposta para os testes.
   pasta_para_gravar = Sys.getenv("VEICULOSBR_GRAVAR_RESPOSTAS")
   if (pasta_para_gravar != "") {
-    gravar_arquivo_de_texto(texto, file.path(pasta_para_gravar, nome_gravado))
+    dir.create(pasta_para_gravar, recursive = TRUE, showWarnings = FALSE)
+    writeLines(enc2utf8(texto), file.path(pasta_para_gravar, nome_do_arquivo_gravado(endereco)), useBytes = TRUE)
   }
-  pasta = pasta_do_cache()
-  if (validade_cache_dias > 0 && !is.null(pasta)) {
-    gravar_arquivo_de_texto(texto, file.path(pasta, nome_gravado))
-  }
-  list(status = 200L, texto = texto, cabecalhos = cabecalhos_da_resposta)
+
+  resposta_guardada = list(status = 200L, texto = texto, cabecalhos = cabecalhos_da_resposta)
+  estado_da_rede$respostas_desta_sessao[[endereco]] = resposta_guardada
+  resposta_guardada
 }
 
 consultar_com_nova_tentativa = function(endereco, cabecalhos) {
@@ -173,19 +134,6 @@ consultar_com_nova_tentativa = function(endereco, cabecalhos) {
       stop(erro_de_consulta(paste0("Sem resposta de ", endereco, ": ", conditionMessage(erro))))
     }
   )
-}
-
-arquivo_do_cache_valido = function(nome_gravado, validade_cache_dias) {
-  pasta = pasta_do_cache()
-  if (is.null(pasta) || validade_cache_dias <= 0) {
-    return(NULL)
-  }
-  arquivo = file.path(pasta, nome_gravado)
-  if (!file.exists(arquivo)) {
-    return(NULL)
-  }
-  idade_em_dias = as.numeric(difftime(Sys.time(), file.mtime(arquivo), units = "days"))
-  if (idade_em_dias <= validade_cache_dias) arquivo else NULL
 }
 
 agora = function() {

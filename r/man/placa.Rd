@@ -2,7 +2,6 @@
 % Please edit documentation in R/placa.R
 \name{placa}
 \alias{placa}
-\alias{placa_limpar}
 \alias{placa_tipo}
 \alias{placa_valida}
 \alias{placa_para_mercosul}
@@ -10,8 +9,6 @@
 \alias{placa_formatar}
 \title{Conferir, formatar e converter placas}
 \usage{
-placa_limpar(placa)
-
 placa_tipo(placa)
 
 placa_valida(placa)
@@ -34,7 +31,6 @@ minúscula, e devolvem um vetor do mesmo tamanho (\code{NA} para a placa inváli
 }
 \details{
 \itemize{
-\item \code{placa_limpar()}: só letras maiúsculas e números.
 \item \code{placa_valida()}: \code{TRUE} para o formato antigo ou o Mercosul.
 \item \code{placa_tipo()}: \code{"antiga"}, \code{"mercosul"} ou \code{NA}.
 \item \code{placa_para_mercosul()}: a antiga convertida (o 2º número vira letra, 0 = A

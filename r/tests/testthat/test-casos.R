@@ -22,28 +22,10 @@ test_that("RENAVAM", {
   }
 })
 
-test_that("chassi", {
-  for (caso in ler_casos("chassi.json")) {
-    chassi = ou_na(caso$chassi)
-    rotulo = paste("chassi", chassi, caso$ano_referencia)
-    expect_identical(chassi_valido(chassi), caso$valido, label = rotulo)
-    expect_identical(chassi_pais(chassi), ou_na(caso$pais), label = rotulo)
-    expect_identical(chassi_fabricante(chassi), ou_na(caso$fabricante), label = rotulo)
-    expect_identical(chassi_digito9_confere(chassi), caso$digito9_confere, label = rotulo)
-    expect_identical(chassi_ano_modelo(chassi, caso$ano_referencia), ou_na(caso$ano_modelo, NA_integer_), label = rotulo)
-  }
-})
-
 test_that("semelhan\u00e7a", {
   for (caso in ler_casos("semelhanca.json")) {
     rotulo = paste(caso$placa, "~", caso$fipe)
     expect_equal(semelhanca(ou_na(caso$placa), caso$fipe), caso$semelhanca, label = rotulo)
-  }
-})
-
-test_that("robots.txt", {
-  for (caso in ler_casos("robots.json")) {
-    expect_identical(pode_visitar(caso$robots, caso$caminho), caso$pode, label = caso$descricao)
   }
 })
 

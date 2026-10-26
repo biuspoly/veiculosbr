@@ -17,7 +17,7 @@ fipe_por_placa(
 \arguments{
 \item{placa}{Uma placa.}
 
-\item{fontes}{As fontes de placa, na ordem (veja \code{\link[=placa_consultar]{placa_consultar()}}).}
+\item{fontes}{As fontes de placa, na ordem: \code{"tabelafipebrasil"} e/ou \code{"parallelum"}.}
 
 \item{conferir}{Conferir no catálogo FIPE os códigos que a fonte indicou.}
 
@@ -33,12 +33,12 @@ Uma lista com \code{placa}, \code{veiculo} (\code{data.frame} de uma linha ou
 \description{
 O caminho:
 \enumerate{
-\item a placa vai às fontes (\code{\link[=placa_consultar]{placa_consultar()}}) e volta o veículo: marca,
+\item a placa vai às fontes (abaixo) e volta o veículo: marca,
 modelo, ano e, às vezes, os códigos FIPE que a fonte achou;
 \item com \code{conferir = TRUE}, cada código da fonte é procurado no catálogo FIPE
 no ano-modelo do veículo (o preço do catálogo vem com o mês de referência);
 \item se a fonte não trouxe nenhum código, o pacote procura no catálogo os
-modelos da mesma marca e ano com nome parecido (\code{\link[=semelhanca]{semelhanca()}}) e devolve
+modelos da mesma marca e ano com nome parecido e devolve
 todos os que ficam perto do melhor (\code{\link[=fipe_candidatos]{fipe_candidatos()}}).
 }
 }
@@ -46,6 +46,20 @@ todos os que ficam perto do melhor (\code{\link[=fipe_candidatos]{fipe_candidato
 Sem o ano-modelo (só o de fabricação), procura nos dois anos possíveis: o
 veículo fabricado em 2017 pode ser modelo 2017 ou 2018. Sem o tipo (carro,
 moto ou caminhão), escolhe o tipo em que a marca e o modelo mais se parecem.
+
+As fontes do veículo pela placa, tentadas na ordem de \code{fontes}:
+\itemize{
+\item \code{"tabelafipebrasil"} (padrão): a página pública
+\verb{https://www.tabelafipebrasil.com/placa/<placa>}. O pacote espera 3
+segundos entre consultas e, se o site recusar (limite de consultas), fica
+10 minutos sem consultá-lo.
+\item \code{"parallelum"} (só quando pedida): a busca por placa da API do Parallelum,
+em teste. A cota é de 5 consultas por mês sem token e 10 com o token
+gratuito (\code{VEICULOSBR_FIPE_TOKEN}); o pacote avisa quantas sobraram.
+}
+
+Nenhuma das duas é oficial (nem Senatran, nem Detran, nem FIPE). Placa com o
+cadastro errado ou desatualizado na origem vem errada aqui também.
 
 \strong{O nome do modelo no cadastro da placa raramente é igual ao da FIPE.} Por
 isso todo candidato diz de onde veio (\code{origem}), a \code{confianca} e a nota de

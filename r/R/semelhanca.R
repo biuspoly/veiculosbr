@@ -34,23 +34,10 @@ parecenca_entre_palavras = function(palavra_placa, palavra_fipe) {
   if (parecenca >= PARECENCA_MINIMA_ENTRE_PALAVRAS) parecenca else 0
 }
 
-#' Semelhança entre o nome do modelo na placa e o nome na FIPE
-#'
-#' O cadastro da placa e a FIPE escrevem o mesmo veículo de jeitos diferentes
-#' ("15.190 CRM 4X2" e "15-190 E Constellation 2p"), então a comparação é por
-#' palavra: quantas palavras da placa aparecem no nome da FIPE (cobertura, peso
-#' 0,8) e quanto as duas listas se sobrepõem (peso 0,2). Número só vale igual;
-#' palavra de 3 letras ou mais aceita abreviação (nota 0,9) e erro pequeno de
-#' digitação. Acento e maiúscula não contam.
-#'
-#' @param nome_na_placa,nome_na_fipe Textos a comparar (vetores do mesmo
-#'   tamanho, ou um deles de tamanho 1).
-#' @return Vetor de notas de 0 a 1, com 3 casas.
-#' @examples
-#' semelhanca("CG 125 CARGO", "CG 125 CARGO/ CARGO KS/125i CARGO")
-#' modelos_da_fipe = c("15-190 E Worker 2p (diesel)(E5)", "17-190 E Worker 2p (diesel)(E5)")
-#' semelhanca("15.190 CRM 4X2 4P", modelos_da_fipe)
-#' @export
+# A nota de 0 a 1 entre o nome do modelo na placa e o nome na FIPE: quantas
+# palavras da placa aparecem no nome da FIPE (cobertura, peso 0,8) e quanto as
+# duas listas se sobrepõem (peso 0,2). Número só vale igual; palavra de 3 letras
+# ou mais aceita abreviação (0,9) e erro pequeno de digitação. Vetorizada.
 semelhanca = function(nome_na_placa, nome_na_fipe) {
   mapply(semelhanca_de_um_par, nome_na_placa, nome_na_fipe, USE.NAMES = FALSE)
 }

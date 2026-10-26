@@ -1,9 +1,8 @@
 # Tabela FIPE pelo catálogo: marca, modelo, ano e preço, pela API pública do
-# Parallelum (que repete os dados da FIPE). As respostas ficam 7 dias em cache.
+# Parallelum (que repete os dados da FIPE).
 
 ENDERECO_DA_API = "https://fipe.parallelum.com.br/api/v2"
 FONTE_DO_CATALOGO = "Tabela FIPE, pela API do Parallelum (fipe.parallelum.com.br)"
-VALIDADE_DO_CATALOGO_DIAS = 7
 TIPO_NA_API = c(carros = "cars", motos = "motorcycles", caminhoes = "trucks")
 # Na FIPE, carro flex aparece como Gasolina (código 1).
 CODIGO_DO_COMBUSTIVEL = c(GASOLINA = "1", FLEX = "1", ALCOOL = "2", ETANOL = "2", DIESEL = "3")
@@ -13,23 +12,18 @@ CODIGO_DO_COMBUSTIVEL = c(GASOLINA = "1", FLEX = "1", ALCOOL = "2", ETANOL = "2"
 #' Consultas à tabela da Fundação Instituto de Pesquisas Econômicas (FIPE)
 #' pela API pública do Parallelum. Sem token, são 1.000 consultas por dia; com
 #' o token gratuito de <https://fipe.api.br> na variável de ambiente
-#' `VEICULOSBR_FIPE_TOKEN`, o limite sobe. As respostas ficam 7 dias em cache
-#' (a FIPE só muda uma vez por mês).
+#' `VEICULOSBR_FIPE_TOKEN`, o limite sobe. Nada é gravado em disco; a mesma
+#' consulta feita de novo na mesma sessão não volta à internet.
 #'
-#' - `fipe_referencias()`: os meses da tabela.
 #' - `fipe_marcas()`: as marcas de um tipo de veículo.
 #' - `fipe_modelos()`: os modelos de uma marca.
-#' - `fipe_anos_da_marca()`: os anos (com o combustível, ex. `2018-3`) da marca.
-#' - `fipe_modelos_do_ano()`: só os modelos da marca que existem naquele ano.
-#' - `fipe_anos()`: os anos de um código FIPE.
+#' - `fipe_anos()`: os anos (com o combustível, ex. `2018-3`) de um código FIPE.
 #' - `fipe_preco()`: o preço de um código FIPE num ano. `ano = 2018` traz todos
 #'   os combustíveis daquele ano; `ano = "2018-3"` só aquele. O ano 32000 é a
 #'   convenção da FIPE para o veículo zero quilômetro.
-#' - `fipe_preco_do_modelo()`: o preço pelo código do modelo (não o código FIPE).
 #'
 #' @param tipo `"carros"`, `"motos"` ou `"caminhoes"`.
 #' @param marca O código da marca (coluna `codigo` de `fipe_marcas()`).
-#' @param modelo O código do modelo (coluna `codigo` de `fipe_modelos()`).
 #' @param codigo_fipe O código FIPE, como `"515134-1"`.
 #' @param ano Ano-modelo (`2018`) ou o código do ano com combustível (`"2018-3"`).
 #' @return Um `data.frame`. Os de preço têm `codigo_fipe`, `marca`, `modelo`,
@@ -46,8 +40,6 @@ CODIGO_DO_COMBUSTIVEL = c(GASOLINA = "1", FLEX = "1", ALCOOL = "2", ETANOL = "2"
 #' @name fipe
 NULL
 
-#' @rdname fipe
-#' @export
 fipe_referencias = function() {
   lista = consultar_catalogo("/references")
   if (length(lista) == 0) {
@@ -68,14 +60,10 @@ fipe_modelos = function(tipo, marca) {
   itens_do_catalogo(consultar_catalogo(paste0("/", tipo_na_api(tipo), "/brands/", marca, "/models")))
 }
 
-#' @rdname fipe
-#' @export
 fipe_anos_da_marca = function(tipo, marca) {
   itens_do_catalogo(consultar_catalogo(paste0("/", tipo_na_api(tipo), "/brands/", marca, "/years")))
 }
 
-#' @rdname fipe
-#' @export
 fipe_modelos_do_ano = function(tipo, marca, ano) {
   caminho = paste0("/", tipo_na_api(tipo), "/brands/", marca, "/years/", ano, "/models")
   itens_do_catalogo(consultar_catalogo(caminho))
@@ -103,20 +91,13 @@ fipe_preco = function(tipo, codigo_fipe, ano) {
   juntar_precos(precos)
 }
 
-#' @rdname fipe
-#' @export
+# O preço pelo código do modelo (não o código FIPE), como a busca de candidatos acha.
 fipe_preco_do_modelo = function(tipo, marca, modelo, ano) {
   caminho = paste0("/", tipo_na_api(tipo), "/brands/", marca, "/models/", modelo, "/years/", ano)
   juntar_precos(list(preco_do_detalhe(consultar_catalogo(caminho))))
 }
 
-#' Valor em reais a partir do texto
-#'
-#' @param texto Texto como `"R$ 257.276,00"`.
-#' @return O número (`257276`), ou `NA`.
-#' @examples
-#' valor_em_reais("R$ 257.276,00")
-#' @export
+# "R$ 257.276,00" -> 257276
 valor_em_reais = function(texto) {
   texto = ifelse(is.na(texto), "", as.character(texto))
   numeros = gsub("[^0-9,]", "", texto)
@@ -182,7 +163,7 @@ tipo_na_api = function(tipo) {
 consultar_catalogo = function(caminho) {
   token = Sys.getenv("VEICULOSBR_FIPE_TOKEN")
   cabecalhos = if (token != "") list("X-Subscription-Token" = token) else list()
-  resposta = baixar(paste0(ENDERECO_DA_API, caminho), cabecalhos, validade_cache_dias = VALIDADE_DO_CATALOGO_DIAS)
+  resposta = baixar(paste0(ENDERECO_DA_API, caminho), cabecalhos)
   if (resposta$status == 404L) {
     return(list())
   }

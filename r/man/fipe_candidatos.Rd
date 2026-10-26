@@ -28,7 +28,7 @@ fipe_candidatos(
 
 \item{maximo_candidatos}{Quantos candidatos, no máximo.}
 
-\item{semelhanca_minima}{A nota mínima de \code{\link[=semelhanca]{semelhanca()}}.}
+\item{semelhanca_minima}{A nota mínima de semelhança (de 0 a 1).}
 }
 \value{
 Um \code{data.frame} com as colunas de candidatos de \code{\link[=fipe_por_placa]{fipe_por_placa()}}.

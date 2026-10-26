@@ -1,4 +1,0 @@
-# robots.txt sintetico para teste
-User-agent: *
-Disallow: /administrator/
-Disallow: /calculadora-financiamento

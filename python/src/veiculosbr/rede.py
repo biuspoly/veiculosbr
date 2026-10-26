@@ -1,8 +1,9 @@
 """Toda consulta à internet passa por aqui.
 
-O robô se identifica, espera entre duas consultas ao mesmo site, guarda as
-respostas num cache local e, nos testes, lê respostas gravadas em vez de ir à
-rede (variável VEICULOSBR_RESPOSTAS_GRAVADAS).
+O robô se identifica, espera entre duas consultas ao mesmo site e para de
+consultar um site que recusou. Nada é gravado em disco: a mesma consulta feita
+de novo na mesma sessão sai da memória, e some quando o Python fecha. Nos
+testes, as respostas vêm de arquivos (variável VEICULOSBR_RESPOSTAS_GRAVADAS).
 """
 
 from __future__ import annotations
@@ -15,7 +16,6 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 import httpx
-from platformdirs import user_cache_dir
 
 VERSAO = "0.1.0"
 ROBO = f"veiculosbr/{VERSAO} (+https://github.com/biuspoly/veiculosbr)"
@@ -25,11 +25,7 @@ TENTATIVAS = 2
 SEGUNDOS_ANTES_DE_TENTAR_DE_NOVO = 2
 # Site que disse "chega" (HTTP 429 ou 403) fica sem consulta por este tempo.
 SEGUNDOS_DE_PAUSA_DEPOIS_DE_RECUSA = 600
-
 APELIDO_DO_SITE = {"fipe.parallelum.com.br": "parallelum", "www.tabelafipebrasil.com": "tabelafipebrasil"}
-
-_ultima_consulta_por_site: dict[str, float] = {}
-_site_pausado_ate: dict[str, float] = {}
 
 
 class ErroDeConsulta(Exception):
@@ -51,6 +47,11 @@ class Resposta:
     cabecalhos: dict = field(default_factory=dict)
 
 
+_respostas_desta_sessao: dict[str, Resposta] = {}
+_ultima_consulta_por_site: dict[str, float] = {}
+_site_pausado_ate: dict[str, float] = {}
+
+
 def nome_do_arquivo_gravado(endereco: str) -> str:
     """O mesmo nome em R e em Python: o site (com apelido curto, para o caminho
     caber no limite de 100 caracteres do pacote em R) e o resto do endereço, com
@@ -62,40 +63,16 @@ def nome_do_arquivo_gravado(endereco: str) -> str:
     return re.sub(r"[^A-Za-z0-9.-]", "_", f"{site}/{caminho}")
 
 
-def pasta_do_cache() -> Path | None:
-    configurada = os.environ.get("VEICULOSBR_CACHE", "")
-    if configurada == "0":
-        return None
-    return Path(configurada) if configurada else Path(user_cache_dir("veiculosbr"))
-
-
-def limpar_cache() -> int:
-    """Apaga o cache local. Devolve quantos arquivos saíram."""
-    pasta = pasta_do_cache()
-    if pasta is None or not pasta.exists():
-        return 0
-    apagados = 0
-    for arquivo in pasta.iterdir():
-        if arquivo.is_file():
-            arquivo.unlink()
-            apagados += 1
-    return apagados
-
-
-def baixar(endereco: str, cabecalhos: dict | None = None, validade_cache_dias: float = 0,
-           respeitar_ritmo: bool = False) -> Resposta:
-    nome_gravado = nome_do_arquivo_gravado(endereco)
-
+def baixar(endereco: str, cabecalhos: dict | None = None, respeitar_ritmo: bool = False) -> Resposta:
     pasta_gravadas = os.environ.get("VEICULOSBR_RESPOSTAS_GRAVADAS", "")
     if pasta_gravadas:
-        arquivo = Path(pasta_gravadas) / nome_gravado
+        arquivo = Path(pasta_gravadas) / nome_do_arquivo_gravado(endereco)
         if not arquivo.exists():
             raise RespostaNaoGravada(f"Resposta não gravada para {endereco} ({arquivo.name})")
         return Resposta(200, arquivo.read_text(encoding="utf-8"))
 
-    arquivo_do_cache = _arquivo_do_cache_valido(nome_gravado, validade_cache_dias)
-    if arquivo_do_cache is not None:
-        return Resposta(200, arquivo_do_cache.read_text(encoding="utf-8"))
+    if endereco in _respostas_desta_sessao:
+        return _respostas_desta_sessao[endereco]
 
     site = urlsplit(endereco).netloc
     pausado_ate = _site_pausado_ate.get(site, 0)
@@ -104,7 +81,7 @@ def baixar(endereco: str, cabecalhos: dict | None = None, validade_cache_dias: f
         raise ErroDeConsulta(f"{site} recusou consultas há pouco; nova tentativa em {minutos} min")
 
     if respeitar_ritmo:
-        _esperar_a_vez_do_site(endereco)
+        _esperar_a_vez_do_site(site)
 
     resposta = _consultar_com_nova_tentativa(endereco, {"User-Agent": ROBO, **(cabecalhos or {})})
 
@@ -119,10 +96,9 @@ def baixar(endereco: str, cabecalhos: dict | None = None, validade_cache_dias: f
     if resposta.status_code != 200:
         raise ErroDeConsulta(f"{endereco} respondeu HTTP {resposta.status_code}")
 
-    _gravar_se_pedido(nome_gravado, resposta.text)
-    if validade_cache_dias > 0:
-        _guardar_no_cache(nome_gravado, resposta.text)
-    return Resposta(200, resposta.text, dict(resposta.headers))
+    _gravar_se_pedido(endereco, resposta.text)
+    _respostas_desta_sessao[endereco] = Resposta(200, resposta.text, dict(resposta.headers))
+    return _respostas_desta_sessao[endereco]
 
 
 def _consultar_com_nova_tentativa(endereco: str, cabecalhos: dict) -> httpx.Response:
@@ -141,35 +117,15 @@ def _consultar_com_nova_tentativa(endereco: str, cabecalhos: dict) -> httpx.Resp
     raise AssertionError("inalcançável")
 
 
-def _arquivo_do_cache_valido(nome_gravado: str, validade_cache_dias: float) -> Path | None:
-    pasta = pasta_do_cache()
-    if pasta is None or validade_cache_dias <= 0:
-        return None
-    arquivo = pasta / nome_gravado
-    if not arquivo.exists():
-        return None
-    idade_em_dias = (time.time() - arquivo.stat().st_mtime) / 86400
-    return arquivo if idade_em_dias <= validade_cache_dias else None
-
-
-def _guardar_no_cache(nome_gravado: str, texto: str) -> None:
-    pasta = pasta_do_cache()
-    if pasta is None:
-        return
-    pasta.mkdir(parents=True, exist_ok=True)
-    (pasta / nome_gravado).write_text(texto, encoding="utf-8")
-
-
-def _gravar_se_pedido(nome_gravado: str, texto: str) -> None:
-    # VEICULOSBR_GRAVAR_RESPOSTAS: consulta de verdade, guardada para os testes (ferramentas/).
+def _gravar_se_pedido(endereco: str, texto: str) -> None:
+    # Só para quem desenvolve o pacote: VEICULOSBR_GRAVAR_RESPOSTAS guarda a resposta para os testes.
     pasta_para_gravar = os.environ.get("VEICULOSBR_GRAVAR_RESPOSTAS", "")
     if pasta_para_gravar:
         Path(pasta_para_gravar).mkdir(parents=True, exist_ok=True)
-        (Path(pasta_para_gravar) / nome_gravado).write_text(texto, encoding="utf-8")
+        (Path(pasta_para_gravar) / nome_do_arquivo_gravado(endereco)).write_text(texto, encoding="utf-8")
 
 
-def _esperar_a_vez_do_site(endereco: str) -> None:
-    site = urlsplit(endereco).netloc
+def _esperar_a_vez_do_site(site: str) -> None:
     ultima = _ultima_consulta_por_site.get(site)
     if ultima is not None:
         falta = SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE - (time.monotonic() - ultima)

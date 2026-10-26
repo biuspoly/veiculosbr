@@ -4,24 +4,22 @@
 \name{veiculosbr-package}
 \alias{veiculosbr}
 \alias{veiculosbr-package}
-\title{veiculosbr: placa, RENAVAM, chassi e preço FIPE de veículos brasileiros}
+\title{veiculosbr: placa, RENAVAM e preço FIPE de veículos brasileiros}
 \description{
-Confere e converte placas (antiga e Mercosul), confere RENAVAM e chassi,
-consulta a tabela FIPE e estima o preço FIPE a partir da placa, mostrando
-todos os candidatos quando houver dúvida. A versão em Python
-(\verb{pip install veiculosbr}) tem as mesmas funções, com os mesmos nomes, e
-passa pelos mesmos casos de teste.
+Confere e converte placas (antiga e Mercosul), confere o RENAVAM, consulta a
+tabela FIPE e estima o preço FIPE a partir da placa, mostrando todos os
+candidatos quando houver dúvida. A versão em Python (\verb{pip install veiculosbr}) tem as mesmas funções, com os mesmos nomes, e passa pelos
+mesmos casos de teste.
 }
 \section{De onde vêm os dados}{
 
 \strong{Nada aqui é dado oficial do Senatran, do Detran ou da FIPE consultado
 direto na fonte.} Cada informação vem de um lugar:\tabular{lll}{
-   Informação \tab Fonte \tab Atualização \cr
+   Informação \tab Fonte \tab Quando \cr
    Faixa de letras de cada estado (\code{\link[=placa_uf]{placa_uf()}}) \tab Wikipédia em inglês, "Vehicle registration plates of Brazil", que cita o Sinesp/Senatran \tab coletada em 26/10/2026, vem dentro do pacote \cr
-   País e fabricante do chassi (\code{\link[=chassi_pais]{chassi_pais()}}, \code{\link[=chassi_fabricante]{chassi_fabricante()}}) \tab Wikipédia em inglês, "Vehicle identification number" \tab coletada em 26/10/2026, vem dentro do pacote \cr
-   Regras de placa, RENAVAM e chassi \tab as regras públicas de formato (Resolução Contran 780/2019, módulo 11 do RENAVAM, norma ISO 3779) \tab escritas no código \cr
-   Tabela FIPE (\code{\link[=fipe_preco]{fipe_preco()}} e afins) \tab API pública do Parallelum (\url{https://fipe.parallelum.com.br}), que repete a tabela de \url{https://veiculos.fipe.org.br} \tab consulta na hora, cache de 7 dias \cr
-   Veículo pela placa (\code{\link[=placa_consultar]{placa_consultar()}}) \tab página pública \url{https://www.tabelafipebrasil.com/placa/}; e, só quando pedida, a busca por placa do Parallelum \tab consulta na hora, cache de 30 dias \cr
+   Regras de placa e de RENAVAM \tab as regras públicas de formato (Resolução Contran 780/2019; módulo 11 do RENAVAM) \tab escritas no código \cr
+   Tabela FIPE (\code{\link[=fipe_preco]{fipe_preco()}} e afins) \tab API pública do Parallelum (\url{https://fipe.parallelum.com.br}), que repete a tabela de \url{https://veiculos.fipe.org.br} \tab consultada na hora \cr
+   Veículo pela placa (\code{\link[=fipe_por_placa]{fipe_por_placa()}}) \tab página pública \url{https://www.tabelafipebrasil.com/placa/}; e, só quando pedida, a busca por placa do Parallelum \tab consultada na hora \cr
 }
 
 
@@ -29,15 +27,16 @@ O cadastro da placa vem de sites que não são oficiais: se estiver errado ou
 desatualizado lá, vem errado aqui. O nome do modelo no cadastro raramente é
 igual ao da FIPE, por isso o preço pela placa é uma \strong{estimativa} e vem
 sempre com a fonte, a confiança e o aviso (veja \code{\link[=fipe_por_placa]{fipe_por_placa()}}).
+
+Nada é gravado em disco: o pacote só consulta. A mesma consulta feita de
+novo na mesma sessão do R não volta à internet.
 }
 
 \section{Boa conduta com os sites}{
 
-O pacote se identifica como robô (\verb{veiculosbr/<versão>} e o endereço do
-repositório), confere o \code{robots.txt} antes de ler uma página, espera 3
-segundos entre consultas ao mesmo site, guarda as respostas em cache e,
-quando um site recusa (limite de consultas), fica 10 minutos sem
-consultá-lo. Sites que bloqueiam robôs não são usados.
+O pacote se identifica (\verb{veiculosbr/<versão>} e o endereço do repositório),
+espera 3 segundos entre consultas ao mesmo site e, quando um site recusa
+(limite de consultas), fica 10 minutos sem consultá-lo.
 }
 
 \section{Variáveis de ambiente}{
@@ -45,7 +44,6 @@ consultá-lo. Sites que bloqueiam robôs não são usados.
 \itemize{
 \item \code{VEICULOSBR_FIPE_TOKEN}: o token gratuito de \url{https://fipe.api.br}, que
 aumenta o limite da API do Parallelum.
-\item \code{VEICULOSBR_CACHE}: outra pasta para o cache; \code{0} desliga.
 \item \code{VEICULOSBR_RESPOSTAS_GRAVADAS}: usada pelos testes, lê as respostas de
 uma pasta em vez de ir à internet.
 }

@@ -1,7 +1,6 @@
-# Os testes nunca vão à rede: leem casos/respostas e não usam o cache.
+# Os testes nunca vão à rede: leem casos/respostas.
 withr::local_envvar(
   VEICULOSBR_RESPOSTAS_GRAVADAS = normalizePath(testthat::test_path("casos", "respostas")),
-  VEICULOSBR_CACHE = "0",
   VEICULOSBR_GRAVAR_RESPOSTAS = NA,
   VEICULOSBR_FIPE_TOKEN = NA,
   .local_envir = testthat::teardown_env()

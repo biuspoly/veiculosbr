@@ -12,8 +12,7 @@ def ler_casos(nome_do_arquivo: str) -> list[dict]:
 
 @pytest.fixture(autouse=True)
 def sem_internet(monkeypatch):
-    """Os testes nunca vão à rede: leem casos/respostas e não usam o cache."""
+    """Os testes nunca vão à rede: leem casos/respostas."""
     monkeypatch.setenv("VEICULOSBR_RESPOSTAS_GRAVADAS", str(PASTA_DOS_CASOS / "respostas"))
-    monkeypatch.setenv("VEICULOSBR_CACHE", "0")
     monkeypatch.delenv("VEICULOSBR_GRAVAR_RESPOSTAS", raising=False)
     monkeypatch.delenv("VEICULOSBR_FIPE_TOKEN", raising=False)

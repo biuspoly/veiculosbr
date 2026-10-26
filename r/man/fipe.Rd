@@ -2,46 +2,32 @@
 % Please edit documentation in R/fipe.R
 \name{fipe}
 \alias{fipe}
-\alias{fipe_referencias}
 \alias{fipe_marcas}
 \alias{fipe_modelos}
-\alias{fipe_anos_da_marca}
-\alias{fipe_modelos_do_ano}
 \alias{fipe_anos}
 \alias{fipe_preco}
-\alias{fipe_preco_do_modelo}
 \title{Tabela FIPE pelo catálogo}
 \source{
 \url{https://fipe.parallelum.com.br/api/v2}, que repete a tabela de
 \url{https://veiculos.fipe.org.br}.
 }
 \usage{
-fipe_referencias()
-
 fipe_marcas(tipo)
 
 fipe_modelos(tipo, marca)
 
-fipe_anos_da_marca(tipo, marca)
-
-fipe_modelos_do_ano(tipo, marca, ano)
-
 fipe_anos(tipo, codigo_fipe)
 
 fipe_preco(tipo, codigo_fipe, ano)
-
-fipe_preco_do_modelo(tipo, marca, modelo, ano)
 }
 \arguments{
 \item{tipo}{\code{"carros"}, \code{"motos"} ou \code{"caminhoes"}.}
 
 \item{marca}{O código da marca (coluna \code{codigo} de \code{fipe_marcas()}).}
 
-\item{ano}{Ano-modelo (\code{2018}) ou o código do ano com combustível (\code{"2018-3"}).}
-
 \item{codigo_fipe}{O código FIPE, como \code{"515134-1"}.}
 
-\item{modelo}{O código do modelo (coluna \code{codigo} de \code{fipe_modelos()}).}
+\item{ano}{Ano-modelo (\code{2018}) ou o código do ano com combustível (\code{"2018-3"}).}
 }
 \value{
 Um \code{data.frame}. Os de preço têm \code{codigo_fipe}, \code{marca}, \code{modelo},
@@ -52,21 +38,17 @@ tabela) e \code{fonte}.
 Consultas à tabela da Fundação Instituto de Pesquisas Econômicas (FIPE)
 pela API pública do Parallelum. Sem token, são 1.000 consultas por dia; com
 o token gratuito de \url{https://fipe.api.br} na variável de ambiente
-\code{VEICULOSBR_FIPE_TOKEN}, o limite sobe. As respostas ficam 7 dias em cache
-(a FIPE só muda uma vez por mês).
+\code{VEICULOSBR_FIPE_TOKEN}, o limite sobe. Nada é gravado em disco; a mesma
+consulta feita de novo na mesma sessão não volta à internet.
 }
 \details{
 \itemize{
-\item \code{fipe_referencias()}: os meses da tabela.
 \item \code{fipe_marcas()}: as marcas de um tipo de veículo.
 \item \code{fipe_modelos()}: os modelos de uma marca.
-\item \code{fipe_anos_da_marca()}: os anos (com o combustível, ex. \code{2018-3}) da marca.
-\item \code{fipe_modelos_do_ano()}: só os modelos da marca que existem naquele ano.
-\item \code{fipe_anos()}: os anos de um código FIPE.
+\item \code{fipe_anos()}: os anos (com o combustível, ex. \code{2018-3}) de um código FIPE.
 \item \code{fipe_preco()}: o preço de um código FIPE num ano. \code{ano = 2018} traz todos
 os combustíveis daquele ano; \code{ano = "2018-3"} só aquele. O ano 32000 é a
 convenção da FIPE para o veículo zero quilômetro.
-\item \code{fipe_preco_do_modelo()}: o preço pelo código do modelo (não o código FIPE).
 }
 }
 \examples{

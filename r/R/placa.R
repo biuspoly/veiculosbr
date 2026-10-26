@@ -10,7 +10,6 @@ LETRAS_DO_QUINTO_CARACTERE = LETTERS[1:10]
 #' Todas aceitam um vetor de placas, com ou sem hífen, espaço ou letra
 #' minúscula, e devolvem um vetor do mesmo tamanho (`NA` para a placa inválida).
 #'
-#' - `placa_limpar()`: só letras maiúsculas e números.
 #' - `placa_valida()`: `TRUE` para o formato antigo ou o Mercosul.
 #' - `placa_tipo()`: `"antiga"`, `"mercosul"` ou `NA`.
 #' - `placa_para_mercosul()`: a antiga convertida (o 2º número vira letra, 0 = A
@@ -31,8 +30,6 @@ LETRAS_DO_QUINTO_CARACTERE = LETTERS[1:10]
 #' @name placa
 NULL
 
-#' @rdname placa
-#' @export
 placa_limpar = function(placa) {
   placa = ifelse(is.na(placa), "", as.character(placa))
   gsub("[^A-Z0-9]", "", toupper(placa))

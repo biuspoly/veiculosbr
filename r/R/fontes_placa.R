@@ -1,42 +1,16 @@
 # De onde vêm os dados do veículo pela placa. Cada fonte é uma função à parte,
-# com a mesma regra do pacote em Python (veja ?placa_consultar).
+# com a mesma regra do pacote em Python (as fontes estão descritas em ?fipe_por_placa).
 
 ENDERECO_TABELAFIPEBRASIL = "https://www.tabelafipebrasil.com/placa/"
 ENDERECO_PARALLELUM_PLACA = "https://fipe.parallelum.com.br/api/v2/plates/"
 FONTE_TABELAFIPEBRASIL = "tabelafipebrasil.com (p\u00e1gina p\u00fablica de placa)"
 FONTE_PARALLELUM_PLACA = "Parallelum, busca por placa (fipe.parallelum.com.br)"
-VALIDADE_DA_PLACA_DIAS = 30
 TIPO_PELO_SEGMENTO = c(AUTO = "carros", MOTO = "motos", CAMINHAO = "caminhoes")
 FONTES_DE_PLACA = c("tabelafipebrasil", "parallelum")
 
-#' Dados do veículo pela placa
-#'
-#' Tenta as fontes na ordem e para na primeira que achar a placa.
-#'
-#' - `"tabelafipebrasil"` (padrão): a página pública
-#'   `https://www.tabelafipebrasil.com/placa/<placa>`. O `robots.txt` do site
-#'   permite robôs; o pacote confere isso antes de cada consulta, espera 3
-#'   segundos entre consultas, guarda a página 30 dias e, se o site recusar
-#'   (limite de consultas), fica 10 minutos sem consultá-lo.
-#' - `"parallelum"` (só quando pedida): a busca por placa da API do Parallelum,
-#'   em teste ("Alpha"). A cota é de 5 consultas por mês sem token e 10 com o
-#'   token gratuito (`VEICULOSBR_FIPE_TOKEN`); o pacote avisa quantas sobraram.
-#'
-#' Nenhuma das duas é oficial (nem Senatran, nem Detran, nem FIPE). Placa com o
-#' cadastro errado ou desatualizado na origem vem errada aqui também.
-#'
-#' @param placa Uma placa.
-#' @param fontes As fontes, na ordem: `"tabelafipebrasil"` e/ou `"parallelum"`.
-#' @return Uma lista com `veiculo` (`data.frame` de uma linha, ou `NULL` se
-#'   nenhuma fonte achou), `fipe` (os códigos FIPE que a fonte mostrou),
-#'   `avisos` e `falhas` (o que deu errado em cada fonte).
-#' @source Veja a seção "De onde vêm os dados" em [veiculosbr].
-#' @examples
-#' \dontrun{
-#' # Vai à internet
-#' placa_consultar("ABC1D23")
-#' }
-#' @export
+# Tenta as fontes na ordem e para na primeira que achar a placa. Devolve
+# veiculo (NULL se nenhuma achou), fipe (os códigos que a fonte mostrou),
+# avisos e falhas. As fontes estão descritas em ?fipe_por_placa.
 placa_consultar = function(placa, fontes = "tabelafipebrasil") {
   if (length(placa) != 1 || !placa_valida(placa)) {
     stop("Placa inv\u00e1lida: ", placa, call. = FALSE)
@@ -80,11 +54,7 @@ tipo_pelo_segmento = function(segmento) {
 
 consultar_tabelafipebrasil = function(placa) {
   placa = placa_limpar(placa)
-  endereco = paste0(ENDERECO_TABELAFIPEBRASIL, placa)
-  if (!site_permite(endereco)) {
-    stop(erro_de_consulta("o robots.txt do tabelafipebrasil.com n\u00e3o permite mais esta consulta"))
-  }
-  resposta = baixar(endereco, validade_cache_dias = VALIDADE_DA_PLACA_DIAS, respeitar_ritmo = TRUE)
+  resposta = baixar(paste0(ENDERECO_TABELAFIPEBRASIL, placa), respeitar_ritmo = TRUE)
   if (resposta$status == 404L) {
     return(NULL)
   }
@@ -142,7 +112,7 @@ consultar_parallelum = function(placa) {
   placa = placa_limpar(placa)
   token = Sys.getenv("VEICULOSBR_FIPE_TOKEN")
   cabecalhos = if (token != "") list("X-Subscription-Token" = token) else list()
-  resposta = baixar(paste0(ENDERECO_PARALLELUM_PLACA, placa), cabecalhos, validade_cache_dias = VALIDADE_DA_PLACA_DIAS)
+  resposta = baixar(paste0(ENDERECO_PARALLELUM_PLACA, placa), cabecalhos)
   consulta = if (resposta$status == 404L) NULL else ler_resposta_parallelum(placa, resposta$texto)
 
   nomes_dos_cabecalhos = tolower(names(resposta$cabecalhos))

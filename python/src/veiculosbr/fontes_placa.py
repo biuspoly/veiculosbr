@@ -1,9 +1,8 @@
 """De onde vêm os dados do veículo pela placa. Cada fonte é uma função à parte.
 
 - tabelafipebrasil (padrão): a página pública https://www.tabelafipebrasil.com/placa/<placa>.
-  O robots.txt do site permite robôs; o pacote confere isso antes de cada
-  consulta, espera 3 s entre consultas, guarda a página por 30 dias e, se o
-  site recusar (limite de consultas), fica 10 minutos sem consultá-lo.
+  O pacote espera 3 s entre consultas e, se o site recusar (limite de
+  consultas), fica 10 minutos sem consultá-lo.
 - parallelum (só quando pedida): a busca por placa da API do Parallelum, em
   teste ("Alpha"). A cota é de 5 consultas por mês sem token e 10 com o token
   gratuito (VEICULOSBR_FIPE_TOKEN); o pacote avisa quantas sobraram.
@@ -24,14 +23,12 @@ from selectolax.lexbor import LexborHTMLParser
 from .fipe import valor_em_reais
 from .placa import placa_limpar, placa_valida
 from .rede import ErroDeConsulta, baixar
-from .robots import site_permite
 from .semelhanca import palavras_do_nome
 
 ENDERECO_TABELAFIPEBRASIL = "https://www.tabelafipebrasil.com/placa/{placa}"
 ENDERECO_PARALLELUM_PLACA = "https://fipe.parallelum.com.br/api/v2/plates/{placa}"
 FONTE_TABELAFIPEBRASIL = "tabelafipebrasil.com (página pública de placa)"
 FONTE_PARALLELUM_PLACA = "Parallelum, busca por placa (fipe.parallelum.com.br)"
-VALIDADE_DA_PLACA_DIAS = 30
 TIPO_PELO_SEGMENTO = {"AUTO": "carros", "MOTO": "motos", "CAMINHAO": "caminhoes"}
 
 
@@ -77,10 +74,7 @@ def tipo_pelo_segmento(segmento) -> str | None:
 
 def consultar_tabelafipebrasil(placa) -> ConsultaDePlaca | None:
     placa = placa_limpar(placa)
-    endereco = ENDERECO_TABELAFIPEBRASIL.format(placa=placa)
-    if not site_permite(endereco):
-        raise ErroDeConsulta("o robots.txt do tabelafipebrasil.com não permite mais esta consulta")
-    resposta = baixar(endereco, validade_cache_dias=VALIDADE_DA_PLACA_DIAS, respeitar_ritmo=True)
+    resposta = baixar(ENDERECO_TABELAFIPEBRASIL.format(placa=placa), respeitar_ritmo=True)
     if resposta.status == 404:
         return None
     return ler_pagina_tabelafipebrasil(placa, resposta.texto)
@@ -130,8 +124,7 @@ def consultar_parallelum(placa) -> ConsultaDePlaca | None:
     placa = placa_limpar(placa)
     token = os.environ.get("VEICULOSBR_FIPE_TOKEN", "")
     cabecalhos = {"X-Subscription-Token": token} if token else None
-    resposta = baixar(ENDERECO_PARALLELUM_PLACA.format(placa=placa), cabecalhos,
-                      validade_cache_dias=VALIDADE_DA_PLACA_DIAS)
+    resposta = baixar(ENDERECO_PARALLELUM_PLACA.format(placa=placa), cabecalhos)
     consulta = None if resposta.status == 404 else ler_resposta_parallelum(placa, resposta.texto)
 
     restantes = {nome.lower(): valor for nome, valor in resposta.cabecalhos.items()}.get(

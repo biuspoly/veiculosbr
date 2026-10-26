@@ -6,8 +6,9 @@ from pathlib import Path
 import pytest
 
 import veiculosbr
-from veiculosbr import fipe_marcas, fipe_preco, placa_consultar, valor_em_reais
-from veiculosbr.fontes_placa import ler_pagina_tabelafipebrasil, tipo_pelo_segmento
+from veiculosbr import fipe_marcas, fipe_preco
+from veiculosbr.fipe import valor_em_reais
+from veiculosbr.fontes_placa import ler_pagina_tabelafipebrasil, placa_consultar, tipo_pelo_segmento
 from veiculosbr.rede import RespostaNaoGravada, baixar, nome_do_arquivo_gravado
 
 RAIZ = Path(__file__).resolve().parents[2]
@@ -31,7 +32,8 @@ def test_tipo_pelo_segmento():
 def test_nome_do_arquivo_gravado():
     assert (nome_do_arquivo_gravado("https://fipe.parallelum.com.br/api/v2/cars/brands")
             == "parallelum_cars_brands")
-    assert nome_do_arquivo_gravado("https://www.tabelafipebrasil.com/robots.txt") == "tabelafipebrasil_robots.txt"
+    assert (nome_do_arquivo_gravado("https://www.tabelafipebrasil.com/placa/ZZA1B23")
+            == "tabelafipebrasil_placa_ZZA1B23")
 
 
 def test_resposta_que_nao_foi_gravada():
