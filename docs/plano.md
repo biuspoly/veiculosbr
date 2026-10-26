@@ -1,6 +1,7 @@
 # Plano do veiculosbr
 
-Situação em 26/10/2026: só o plano. Nenhum código ainda, as dependências esperam a aprovação do usuário.
+Situação em 26/10/2026: só o plano, sem código. Nome e dependências aprovados pelo usuário. Sem token
+nem plano pago do Parallelum (decisão dele): a busca por placa vive das fontes abertas abaixo.
 
 ## O que já existe
 
@@ -26,12 +27,36 @@ No R o espaço está vazio. No Python, o `veiculosbr` só se justifica fazendo m
 4. **FIPE pelo catálogo.** Marcas, modelos, anos, preço e código FIPE, pela API do Parallelum (v2), com
    cache local.
 5. **FIPE pela placa**, em cascata:
-   - a placa vai à busca por placa do Parallelum, que devolve o veículo (marca, modelo, ano, combustível,
-     cidade) e a lista `fipePrices`. Quando há mais de um preço, todos voltam;
-   - quando a lista vem vazia (acontece: o exemplo da própria documentação volta sem preço), o pacote
+   - a placa vai às fontes de placa (abaixo), que devolvem o veículo (marca, modelo, ano, combustível,
+     cidade) e, às vezes, os preços FIPE. Quando há mais de um preço, todos voltam;
+   - quando nenhuma traz preço (acontece: o exemplo da documentação volta sem preço nas duas), o pacote
      procura no catálogo os modelos daquela marca e ano parecidos com o nome do modelo e devolve **todos
      os candidatos**, cada um com uma nota de semelhança;
    - todo resultado diz a fonte, o grau de confiança e o aviso de que pode estar errado.
+
+## Fontes de placa
+
+Conferidas em 26/10/2026, sempre com a placa de exemplo da documentação (ABC1D23):
+
+| Fonte | Robôs | Como responde | Decisão |
+|---|---|---|---|
+| Parallelum, `/api/v2/plates/{placa}` | API pública | JSON; 5 consultas/mês sem token | **fonte 1** (cota pequena, mas é API) |
+| tabelafipebrasil.com, `/placa/{placa}` | permitidos | HTML simples, sem desafio, mesmo com o robô se identificando; a API própria deles está desligada | **fonte 2**, lida com `rvest` / `selectolax` |
+| placafipe.com.br | permitidos | aplicativo que só monta a página com JavaScript | **fonte 3, opcional**, por navegador sem tela (`chromote` / `pydoll`); a testar |
+| placafipe.com | bloqueia `/placa/` para robôs de IA; Cloudflare 403 | — | fora |
+| keplaca.com | o mesmo `robots.txt` do placafipe.com; desafio do Cloudflare | — | fora |
+| consultarplaca.com.br | — | pago por crédito | fora (só pela chave do usuário, se um dia ele quiser) |
+
+As fontes 1 e 2 devolveram o mesmo veículo (mesmo final de chassi), sinal de que leem a mesma base.
+
+Regras de toda fonte raspada: o robô se identifica (`veiculosbr/<versão>` + link do repositório), no
+máximo 1 consulta por segundo, cache local de 30 dias por placa, e ela para de ser consultada quando o
+`robots.txt` mudar para proibir, conferido a cada sessão. Um site que muda o desenho quebra só aquela
+fonte: as outras seguem, e o resultado diz qual falhou.
+
+`chromote` e `pydoll` falam com o Chrome pelo mesmo protocolo (DevTools), sem Selenium. Entram só para
+montar páginas de sites que permitem robôs. O recurso do `pydoll` de passar pelo Cloudflare **não** é
+usado: um site com desafio está dizendo que não quer robô.
 
 ## Dependências
 
@@ -42,6 +67,8 @@ No R o espaço está vazio. No Python, o `veiculosbr` só se justifica fazendo m
 | (nenhum) | — | placa, RENAVAM e chassi: só R base |
 | `httr2` | obrigatória | chamadas ao Parallelum, com nova tentativa, limite de ritmo e cache |
 | `jsonlite` | obrigatória | ler a resposta da API |
+| `rvest` | obrigatória | ler a página de placa do tabelafipebrasil |
+| `chromote` | opcional (Suggests) | a fonte 3, que só existe com JavaScript; pede o Chrome instalado |
 | `testthat` | teste | a suíte de testes |
 | `httptest2` | teste | grava a resposta da API uma vez; os testes leem o arquivo e não gastam cota |
 
@@ -54,6 +81,8 @@ A semelhança entre nomes de modelo usa `adist()`, do próprio R, sem `stringdis
 | (nenhum) | — | placa, RENAVAM e chassi: só a biblioteca padrão |
 | `httpx` | obrigatória | chamadas ao Parallelum, com prazo de resposta e repetição |
 | `platformdirs` | obrigatória | a pasta de cache certa em Windows, Mac e Linux (pequena, sem compilação) |
+| `selectolax` | obrigatória | ler a página de placa do tabelafipebrasil (rápido, com instalador pronto para os três sistemas) |
+| `pydoll-python` | opcional (`veiculosbr[navegador]`) | a fonte 3; o mesmo papel do `chromote` |
 | `pytest` | teste | a suíte de testes |
 | `respx` | teste | o equivalente do `httptest2` para o `httpx` |
 | `uv`, `ruff` | ferramenta | ambiente, empacotamento e padrão de código |
@@ -63,8 +92,7 @@ normalizado), sem `rapidfuzz`, para que a nota saia idêntica em R e em Python.
 
 ### O que fica de fora
 
-- **Raspar sites de placa.** O placafipe.com proíbe robôs nas páginas de placa e as protege com Cloudflare.
-  Outra fonte só entra se permitir, como um adaptador à parte, ou por uma API paga com a chave do usuário.
+- **Sites que bloqueiam robôs** (placafipe.com, keplaca.com): nem por navegador sem tela.
 - **Dono, débitos e multas.** São dados pessoais (LGPD), e os serviços do Detran pedem login e captcha.
 
 ## Ordem

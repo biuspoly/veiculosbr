@@ -19,8 +19,9 @@ usuário), em que placa e RENAVAM estão em "Utilidades brasileiras". O resumo d
   suítes (testthat e pytest) leem esses arquivos. Uma regra mudou num lado e não mudou no outro = teste
   vermelho.
 - **Fonte de dados só se permitir.** Respeitar o `robots.txt` e nunca contornar Cloudflare, captcha ou
-  bloqueio. O placafipe.com bloqueia robôs em `/placa/` e protege a página com Cloudflare, então ele **não**
-  é fonte. Cada fonte é um adaptador separado. Uma API paga entra pela chave que o próprio usuário informar.
+  bloqueio, nem com navegador sem tela (o recurso de Cloudflare do `pydoll` não é usado). Fontes aceitas e
+  recusadas, com o motivo, na tabela "Fontes de placa" de `docs/plano.md`. Cada fonte é um adaptador
+  separado, e o robô se identifica, vai devagar e guarda em cache.
 - **FIPE pela placa pode estar errada, e o pacote diz isso.** Todo resultado traz de onde veio, o grau de
   confiança e TODOS os candidatos de FIPE quando houver mais de um, nunca só o "melhor".
 - **Cota é escassa.** A busca por placa do Parallelum dá 5 consultas por mês sem token, 10 com o token
