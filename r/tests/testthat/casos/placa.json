@@ -1,0 +1,22 @@
+[
+  {"placa": "ABC1234",  "valida": true,  "tipo": "antiga",   "mercosul": "ABC1C34", "antiga": "ABC1234", "formatada": "ABC-1234", "uf": "PR"},
+  {"placa": "abc-1234", "valida": true,  "tipo": "antiga",   "mercosul": "ABC1C34", "antiga": "ABC1234", "formatada": "ABC-1234", "uf": "PR"},
+  {"placa": "ABC 1234", "valida": true,  "tipo": "antiga",   "mercosul": "ABC1C34", "antiga": "ABC1234", "formatada": "ABC-1234", "uf": "PR"},
+  {"placa": "ABC1C34",  "valida": true,  "tipo": "mercosul", "mercosul": "ABC1C34", "antiga": "ABC1234", "formatada": "ABC1C34",  "uf": "PR"},
+  {"placa": "PIA1B11",  "valida": true,  "tipo": "mercosul", "mercosul": "PIA1B11", "antiga": "PIA1111", "formatada": "PIA1B11",  "uf": "PI"},
+  {"placa": "MMN1234",  "valida": true,  "tipo": "antiga",   "mercosul": "MMN1C34", "antiga": "MMN1234", "formatada": "MMN-1234", "uf": "PB"},
+  {"placa": "MUA5678",  "valida": true,  "tipo": "antiga",   "mercosul": "MUA5G78", "antiga": "MUA5678", "formatada": "MUA-5678", "uf": "AL"},
+  {"placa": "GKI9999",  "valida": true,  "tipo": "antiga",   "mercosul": "GKI9J99", "antiga": "GKI9999", "formatada": "GKI-9999", "uf": "SP"},
+  {"placa": "GKJ0001",  "valida": true,  "tipo": "antiga",   "mercosul": "GKJ0A01", "antiga": "GKJ0001", "formatada": "GKJ-0001", "uf": "MG"},
+  {"placa": "SAV1000",  "valida": true,  "tipo": "antiga",   "mercosul": "SAV1A00", "antiga": "SAV1000", "formatada": "SAV-1000", "uf": "SP"},
+  {"placa": "SAV1001",  "valida": true,  "tipo": "antiga",   "mercosul": "SAV1A01", "antiga": "SAV1001", "formatada": "SAV-1001", "uf": "CE"},
+  {"placa": "SAV0J99",  "valida": true,  "tipo": "mercosul", "mercosul": "SAV0J99", "antiga": "SAV0999", "formatada": "SAV0J99",  "uf": "SP"},
+  {"placa": "SAV1K01",  "valida": true,  "tipo": "mercosul", "mercosul": "SAV1K01", "antiga": null,      "formatada": "SAV1K01",  "uf": null},
+  {"placa": "ABC1K23",  "valida": true,  "tipo": "mercosul", "mercosul": "ABC1K23", "antiga": null,      "formatada": "ABC1K23",  "uf": "PR"},
+  {"placa": "RIO2A22",  "valida": true,  "tipo": "mercosul", "mercosul": "RIO2A22", "antiga": "RIO2022", "formatada": "RIO2A22",  "uf": "RJ"},
+  {"placa": "ZZA1B23",  "valida": true,  "tipo": "mercosul", "mercosul": "ZZA1B23", "antiga": "ZZA1123", "formatada": "ZZA1B23",  "uf": null},
+  {"placa": "AB12345",  "valida": false, "tipo": null,       "mercosul": null,      "antiga": null,      "formatada": null,       "uf": null},
+  {"placa": "ABC12D3",  "valida": false, "tipo": null,       "mercosul": null,      "antiga": null,      "formatada": null,       "uf": null},
+  {"placa": "",         "valida": false, "tipo": null,       "mercosul": null,      "antiga": null,      "formatada": null,       "uf": null},
+  {"placa": null,       "valida": false, "tipo": null,       "mercosul": null,      "antiga": null,      "formatada": null,       "uf": null}
+]

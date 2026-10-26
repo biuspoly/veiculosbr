@@ -1,0 +1,29 @@
+Package: veiculosbr
+Title: Placa, RENAVAM, Chassi e Preço FIPE de Veículos Brasileiros
+Version: 0.1.0
+Authors@R: person("Marlon", "Hesly", email = "marlonhesly@gmail.com", role = c("aut", "cre"))
+Description: Confere e converte placas de veículo (antiga e Mercosul) e diz o
+    estado de origem pela faixa de letras; confere RENAVAM e chassi (país,
+    fabricante e ano-modelo); consulta a tabela FIPE pela API pública do
+    Parallelum e estima o preço FIPE a partir da placa, devolvendo todos os
+    candidatos quando houver dúvida, com a fonte e o grau de confiança de cada
+    um. Os mesmos casos de teste valem para a versão em Python.
+License: MIT + file LICENSE
+URL: https://github.com/biuspoly/veiculosbr
+BugReports: https://github.com/biuspoly/veiculosbr/issues
+Encoding: UTF-8
+Language: pt-BR
+Depends: R (>= 4.1.0)
+Imports:
+    httr2 (>= 1.0.0),
+    jsonlite,
+    rvest,
+    stats,
+    tools,
+    utils
+Suggests:
+    testthat (>= 3.0.0),
+    withr
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.1

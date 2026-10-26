@@ -1,105 +1,80 @@
 # Plano do veiculosbr
 
-Situação em 26/10/2026: só o plano, sem código. Nome e dependências aprovados pelo usuário. Sem token
-nem plano pago do Parallelum (decisão dele): a busca por placa vive das fontes abertas abaixo.
+Situação em 26/10/2026: **versão 0.1.0 pronta nas duas linguagens.** O R passa no `R CMD check --as-cran`
+sem erro, aviso ou nota; o Python passa no pytest e no ruff. Os dois conferem os mesmos casos de `casos/`.
+Ainda não publicado (repositório privado).
 
-## O que já existe
+## O que já existia antes
 
 | Peça | Python | R |
 |---|---|---|
 | Placa: validar, formatar, converter para Mercosul | `brutils` (MIT) | nada |
 | RENAVAM | `brutils` (`is_valid_renavam`) | nada |
 | Chassi (VIN) | nada voltado ao Brasil | nada |
-| Tabela FIPE | `pyfipe` (lê o site da FIPE, devolve pandas); `python-fipe` arquivado em 2018 | `fipe` (Italo Cegatta) saiu do CRAN em 24/04/2022 por erro não corrigido |
+| Tabela FIPE | `pyfipe` (lê o site da FIPE, devolve pandas); `python-fipe` arquivado em 2018 | `fipe` (Italo Cegatta) saiu do CRAN em 24/04/2022 |
 | FIPE pela placa | nada | nada |
 
-No R o espaço está vazio. No Python, o `veiculosbr` só se justifica fazendo mais que o `brutils` e o `pyfipe`.
+O que o veiculosbr faz a mais que o `brutils`: converte a placa nos dois sentidos, diz o estado de origem pela
+faixa de letras, lê o chassi (país, fabricante, ano-modelo) e tem o FIPE pela placa com todos os candidatos.
+O RENAVAM foi conferido contra o `brutils` em 20.000 números aleatórios, sem nenhuma diferença.
 
 ## O que o pacote faz
 
-1. **Placa.** Valida, formata e diz o tipo (antiga ou Mercosul). Converte nos dois sentidos, avisando que
-   uma placa que já nasceu Mercosul nunca teve versão antiga. Indica o estado provável pela faixa de letras
-   da placa antiga (tabela pública, a conferir antes de entrar).
-2. **RENAVAM.** Confere o dígito (módulo 11) e aceita o número antigo de 9 dígitos, completando com zeros.
-3. **Chassi.** Confere a estrutura (17 caracteres, sem I, O e Q) e diz o fabricante (os 3 primeiros
-   caracteres) e o ano-modelo (o 10º caractere). Esse caractere se repete a cada 30 anos, então volta com
-   as duas possibilidades.
-4. **FIPE pelo catálogo.** Marcas, modelos, anos, preço e código FIPE, pela API do Parallelum (v2), com
-   cache local.
-5. **FIPE pela placa**, em cascata:
-   - a placa vai às fontes de placa (abaixo), que devolvem o veículo (marca, modelo, ano, combustível,
-     cidade) e, às vezes, os preços FIPE. Quando há mais de um preço, todos voltam;
-   - quando nenhuma traz preço (acontece: o exemplo da documentação volta sem preço nas duas), o pacote
-     procura no catálogo os modelos daquela marca e ano parecidos com o nome do modelo e devolve **todos
-     os candidatos**, cada um com uma nota de semelhança;
-   - todo resultado diz a fonte, o grau de confiança e o aviso de que pode estar errado.
+1. **Placa**: `placa_valida`, `placa_tipo`, `placa_para_mercosul`, `placa_para_antiga`, `placa_formatar`,
+   `placa_uf`.
+2. **RENAVAM**: `renavam_valido`, `renavam_limpar` (o antigo de 9 dígitos ganha 00), `renavam_digito`.
+3. **Chassi**: `chassi_valido`, `chassi_pais`, `chassi_fabricante`, `chassi_ano_modelo` (o código se repete a
+   cada 30 anos: fica o mais recente que não passe do ano que vem), `chassi_digito9_confere`.
+4. **FIPE pelo catálogo**: `fipe_referencias`, `fipe_marcas`, `fipe_modelos`, `fipe_anos_da_marca`,
+   `fipe_modelos_do_ano`, `fipe_anos`, `fipe_preco`, `fipe_preco_do_modelo`, pela API v2 do Parallelum.
+5. **FIPE pela placa**: `placa_consultar` (o veículo pelas fontes), `fipe_por_placa` (a cascata) e
+   `fipe_candidatos` (a busca por nome parecido no catálogo):
+   - os códigos que a fonte da placa mostra são conferidos no catálogo, no ano-modelo do veículo;
+   - sem código na fonte, entram todos os modelos da marca naquele ano a até 0,15 da nota do melhor (piso
+     0,3). Uma nota mínima fixa não servia: o cadastro escreve "15.190 CRM 4X2 4P" e a FIPE "15-190 E
+     Worker 2p", e o certo fica com 0,36;
+   - sem ano-modelo, procura nos dois anos possíveis; sem tipo de veículo, escolhe pelo catálogo;
+   - reboque e o que mais a FIPE não cobre voltam sem candidato e com o aviso.
+
+Conferido em 26/10/2026 com quatro placas reais (que não entram no repositório): só pelo catálogo, o pacote
+achou os mesmos códigos e preços que o tabelafipebrasil mostrava.
 
 ## Fontes de placa
 
-Conferidas em 26/10/2026, sempre com a placa de exemplo da documentação (ABC1D23):
-
 | Fonte | Robôs | Como responde | Decisão |
 |---|---|---|---|
-| Parallelum, `/api/v2/plates/{placa}` | API pública | JSON; 5 consultas/mês sem token | **fonte 1** (cota pequena, mas é API) |
-| tabelafipebrasil.com, `/placa/{placa}` | permitidos | HTML simples, sem desafio, mesmo com o robô se identificando; a API própria deles está desligada | **fonte 2**, lida com `rvest` / `selectolax` |
-| placafipe.com.br | permitidos | aplicativo que só monta a página com JavaScript | **fonte 3, opcional**, por navegador sem tela (`chromote` / `pydoll`); a testar |
+| tabelafipebrasil.com, `/placa/{placa}` | permitidos | HTML simples; **limita as consultas por IP** (429 do Cloudflare depois de pouco mais de uma dezena numa tarde, por mais de uma hora) | **fonte padrão**, devagar e com cache |
+| Parallelum, `/api/v2/plates/{placa}` | API pública | JSON; 5 consultas/**mês** sem token, 10 com o token gratuito | **só quando pedida**; o pacote avisa quantas sobraram |
+| placafipe.com.br | permitidos | aplicativo que só monta a página com JavaScript | **fora por enquanto**: o chromote não abriu o navegador nesta máquina (sem Chrome; o Edge sem tela não subiu), e código não testado não entra |
 | placafipe.com | bloqueia `/placa/` para robôs de IA; Cloudflare 403 | — | fora |
 | keplaca.com | o mesmo `robots.txt` do placafipe.com; desafio do Cloudflare | — | fora |
-| consultarplaca.com.br | — | pago por crédito | fora (só pela chave do usuário, se um dia ele quiser) |
+| consultarplaca.com.br | — | pago por crédito | fora |
 
-As fontes 1 e 2 devolveram o mesmo veículo (mesmo final de chassi), sinal de que leem a mesma base.
+O tabelafipebrasil e o Parallelum devolveram o mesmo veículo (mesmo final de chassi): leem a mesma base.
 
-Regras de toda fonte raspada: o robô se identifica (`veiculosbr/<versão>` + link do repositório), no
-máximo 1 consulta por segundo, cache local de 30 dias por placa, e ela para de ser consultada quando o
-`robots.txt` mudar para proibir, conferido a cada sessão. Um site que muda o desenho quebra só aquela
-fonte: as outras seguem, e o resultado diz qual falhou.
-
-`chromote` e `pydoll` falam com o Chrome pelo mesmo protocolo (DevTools), sem Selenium. Entram só para
-montar páginas de sites que permitem robôs. O recurso do `pydoll` de passar pelo Cloudflare **não** é
-usado: um site com desafio está dizendo que não quer robô.
+Regras de toda fonte lida: o robô se identifica, confere o `robots.txt`, espera 3 s entre consultas ao mesmo
+site, guarda em cache (placa 30 dias, catálogo 7, robots 1) e fica 10 minutos sem consultar um site que
+respondeu 429 ou 403. O recurso do `pydoll` de passar pelo Cloudflare **não** é usado: um site com desafio
+está dizendo que não quer robô.
 
 ## Dependências
 
-### R
-
-| Pacote | Tipo | Para quê |
+| | R | Python |
 |---|---|---|
-| (nenhum) | — | placa, RENAVAM e chassi: só R base |
-| `httr2` | obrigatória | chamadas ao Parallelum, com nova tentativa, limite de ritmo e cache |
-| `jsonlite` | obrigatória | ler a resposta da API |
-| `rvest` | obrigatória | ler a página de placa do tabelafipebrasil |
-| `chromote` | opcional (Suggests) | a fonte 3, que só existe com JavaScript; pede o Chrome instalado |
-| `testthat` | teste | a suíte de testes |
-| `httptest2` | teste | grava a resposta da API uma vez; os testes leem o arquivo e não gastam cota |
+| Placa, RENAVAM, chassi | R base | biblioteca padrão |
+| Rede | `httr2`, `jsonlite` | `httpx`, `platformdirs` (pasta de cache) |
+| Página de placa | `rvest` | `selectolax` (leitor `lexbor`; o antigo saiu na 1.0) |
+| Testes | `testthat`, `withr` | `pytest` |
 
-A semelhança entre nomes de modelo usa `adist()`, do próprio R, sem `stringdist`.
+A semelhança usa a mesma conta nas duas linguagens (Levenshtein: `adist` no R, escrita à mão no Python), sem
+`stringdist` nem `rapidfuzz`. Os testes não usam `httptest2` nem `respx`, como estava no plano: as duas
+linguagens leem as respostas gravadas da mesma pasta (`VEICULOSBR_RESPOSTAS_GRAVADAS`), com o mesmo nome de
+arquivo, o que dispensa uma dependência de cada lado. `chromote` e `pydoll` ficaram de fora com a fonte do
+placafipe.com.br.
 
-### Python
+## Próximos passos
 
-| Pacote | Tipo | Para quê |
-|---|---|---|
-| (nenhum) | — | placa, RENAVAM e chassi: só a biblioteca padrão |
-| `httpx` | obrigatória | chamadas ao Parallelum, com prazo de resposta e repetição |
-| `platformdirs` | obrigatória | a pasta de cache certa em Windows, Mac e Linux (pequena, sem compilação) |
-| `selectolax` | obrigatória | ler a página de placa do tabelafipebrasil (rápido, com instalador pronto para os três sistemas) |
-| `pydoll-python` | opcional (`veiculosbr[navegador]`) | a fonte 3; o mesmo papel do `chromote` |
-| `pytest` | teste | a suíte de testes |
-| `respx` | teste | o equivalente do `httptest2` para o `httpx` |
-| `uv`, `ruff` | ferramenta | ambiente, empacotamento e padrão de código |
-
-A semelhança usa o mesmo algoritmo escrito nas duas linguagens (distância de Levenshtein sobre o nome
-normalizado), sem `rapidfuzz`, para que a nota saia idêntica em R e em Python.
-
-### O que fica de fora
-
-- **Sites que bloqueiam robôs** (placafipe.com, keplaca.com): nem por navegador sem tela.
-- **Dono, débitos e multas.** São dados pessoais (LGPD), e os serviços do Detran pedem login e captcha.
-
-## Ordem
-
-1. `casos/*.json`, placa e RENAVAM nas duas linguagens (sem internet).
-2. Chassi.
-3. FIPE pelo catálogo, com o cache.
-4. FIPE pela placa e os candidatos.
-5. Publicar: o repositório aberto e o r-universe primeiro, depois o PyPI; o CRAN por último, porque tem
-   revisão humana.
+1. Tornar o repositório público e publicar: r-universe e PyPI primeiro; CRAN depois (tem revisão humana).
+2. Uma página de demonstração no site de portfólio (`biuspoly/portfolio`).
+3. Testar o placafipe.com.br numa máquina com o Chrome instalado; se funcionar, entra como fonte opcional.
+4. Refazer `dados/` quando o Senatran distribuir faixas novas (a tabela é a de janeiro de 2025).

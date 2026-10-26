@@ -1,0 +1,13 @@
+[
+  {"renavam": "94613459057",    "limpo": "94613459057", "valido": true},
+  {"renavam": "80588682584",    "limpo": "80588682584", "valido": true},
+  {"renavam": "07656759434",    "limpo": "07656759434", "valido": true},
+  {"renavam": "17771294101",    "limpo": "17771294101", "valido": true},
+  {"renavam": "946.134.590-57", "limpo": "94613459057", "valido": true},
+  {"renavam": "526018151",      "limpo": "00526018151", "valido": true},
+  {"renavam": "94613459058",    "limpo": "94613459058", "valido": false},
+  {"renavam": "00000000000",    "limpo": "00000000000", "valido": false},
+  {"renavam": "1234",           "limpo": "1234",        "valido": false},
+  {"renavam": "",               "limpo": "",            "valido": false},
+  {"renavam": null,             "limpo": "",            "valido": false}
+]

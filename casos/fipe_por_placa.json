@@ -1,0 +1,71 @@
+[
+  {"descricao": "a fonte traz um FIPE só, conferido no catálogo",
+   "placa": "ZZA1B23", "fontes": ["tabelafipebrasil"], "conferir": true,
+   "encontrou": true, "marca": "Honda", "ano_modelo_do_veiculo": 2003,
+   "candidatos": [
+     {"codigo_fipe": "811019-0", "ano_modelo": 2003, "preco": 7191.0, "confianca": "alta",
+      "conferido_no_catalogo": true, "referencia": "outubro de 2026"}],
+   "aviso_contem": ["pode estar errada"]},
+
+  {"descricao": "sem conferir, o preço é o da página e a confiança cai para media",
+   "placa": "ZZA1B23", "fontes": ["tabelafipebrasil"], "conferir": false,
+   "encontrou": true, "marca": "Honda", "ano_modelo_do_veiculo": 2003,
+   "candidatos": [
+     {"codigo_fipe": "811019-0", "ano_modelo": 2003, "preco": 7191.0, "confianca": "media",
+      "conferido_no_catalogo": false, "referencia": null}],
+   "aviso_contem": ["pode estar errada"]},
+
+  {"descricao": "a fonte traz dois FIPE: os dois voltam",
+   "placa": "ZZB2C34", "fontes": ["tabelafipebrasil"], "conferir": true,
+   "encontrou": true, "marca": "Volkswagen", "ano_modelo_do_veiculo": 2018,
+   "candidatos": [
+     {"codigo_fipe": "515134-1", "ano_modelo": 2018, "preco": 257276.0, "confianca": "media",
+      "conferido_no_catalogo": true, "referencia": "outubro de 2026"},
+     {"codigo_fipe": "515151-1", "ano_modelo": 2018, "preco": 234352.0, "confianca": "media",
+      "conferido_no_catalogo": true, "referencia": "outubro de 2026"}],
+   "aviso_contem": ["2 preços da FIPE podem ser deste veículo"]},
+
+  {"descricao": "a fonte não traz FIPE: candidatos pela semelhança no catálogo",
+   "placa": "ZZC3D45", "fontes": ["tabelafipebrasil"], "conferir": true,
+   "encontrou": true, "marca": "Honda", "ano_modelo_do_veiculo": 2005,
+   "candidatos": [
+     {"codigo_fipe": "811070-0", "ano_modelo": 2005, "preco": 7912.0, "confianca": "baixa",
+      "conferido_no_catalogo": null, "referencia": "outubro de 2026"}],
+   "aviso_contem": ["pode estar errada"]},
+
+  {"descricao": "reboque: a FIPE não cobre",
+   "placa": "ZZD4E56", "fontes": ["tabelafipebrasil"], "conferir": true,
+   "encontrou": true, "marca": "KRONORTE", "ano_modelo_do_veiculo": null,
+   "candidatos": [],
+   "aviso_contem": ["não cobre este tipo de veículo (Outros)"]},
+
+  {"descricao": "placa que a fonte não acha",
+   "placa": "ZZE5F67", "fontes": ["tabelafipebrasil"], "conferir": true,
+   "encontrou": false, "marca": null, "ano_modelo_do_veiculo": null,
+   "candidatos": [],
+   "aviso_contem": ["Placa não encontrada em nenhuma fonte"]},
+
+  {"descricao": "Parallelum sem tipo e só com o ano de fabricação: tipo pelo catálogo, os dois anos",
+   "placa": "ZZF6G78", "fontes": ["parallelum"], "conferir": true,
+   "encontrou": true, "marca": "HONDA", "ano_modelo_do_veiculo": null,
+   "candidatos": [
+     {"codigo_fipe": "811019-0", "ano_modelo": 2002, "preco": 7005.0, "confianca": "media",
+      "conferido_no_catalogo": true, "referencia": "outubro de 2026"},
+     {"codigo_fipe": "811019-0", "ano_modelo": 2003, "preco": 7191.0, "confianca": "media",
+      "conferido_no_catalogo": true, "referencia": "outubro de 2026"}],
+   "aviso_contem": ["parece motos", "procurado em 2002 e 2003"]},
+
+  {"descricao": "o exemplo da documentação da API: veículo de 1979, que a FIPE não tem",
+   "placa": "ABC1D23", "fontes": ["parallelum"], "conferir": true,
+   "encontrou": true, "marca": "Volkswagen", "ano_modelo_do_veiculo": null,
+   "candidatos": [],
+   "aviso_contem": ["Nenhum modelo parecido na tabela FIPE"]},
+
+  {"descricao": "a primeira fonte não responde (resposta não gravada): vale a segunda",
+   "placa": "ZZF6G78", "fontes": ["tabelafipebrasil", "parallelum"], "conferir": false,
+   "encontrou": true, "marca": "HONDA", "ano_modelo_do_veiculo": null,
+   "candidatos": [
+     {"codigo_fipe": "811019-0", "ano_modelo": null, "preco": 7191.0, "confianca": "media",
+      "conferido_no_catalogo": false, "referencia": null}],
+   "aviso_contem": ["parece motos"], "falha_contem": ["tabelafipebrasil"]}
+]

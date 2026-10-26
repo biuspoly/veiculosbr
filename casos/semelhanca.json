@@ -1,0 +1,16 @@
+[
+  {"placa": "CG 125 CARGO",      "fipe": "CG 125 CARGO/ CARGO KS/125i CARGO",       "semelhanca": 0.92},
+  {"placa": "CG 150 JOB",        "fipe": "CG 150 TITAN-KS/ TITAN-JOB",              "semelhanca": 0.92},
+  {"placa": "15.190 CRM 4X2 4P", "fipe": "15-190 E Constellation 2p (diesel)(E5)",  "semelhanca": 0.36},
+  {"placa": "15.190 CRM 4X2 4P", "fipe": "17-190 E Worker 2p (diesel)(E5)",         "semelhanca": 0.178},
+  {"placa": "Volkswagen",        "fipe": "VW - VolksWagen",                         "semelhanca": 0.9},
+  {"placa": "HONDA",             "fipe": "HONDA",                                   "semelhanca": 1.0},
+  {"placa": "Citroen",           "fipe": "Citroën",                                 "semelhanca": 1.0},
+  {"placa": "GOL 1.0",           "fipe": "Gol 1.0 Mi Total Flex 8V 4p",             "semelhanca": 0.875},
+  {"placa": "AMAROK",            "fipe": "AMAROK CD2.0 16V/S CD2.0 16V TDI 4x2 Die", "semelhanca": 0.825},
+  {"placa": "CONSTEL",           "fipe": "17-260 E Constel. 4x2 2p (diesel) (E5)",  "semelhanca": 0.825},
+  {"placa": "CONSTELATION",      "fipe": "15-190 E Constellation 2p (diesel)(E5)",  "semelhanca": 0.738},
+  {"placa": "KRONE",             "fipe": "VOLKSWAGEN",                              "semelhanca": 0.0},
+  {"placa": "",                  "fipe": "HONDA",                                   "semelhanca": 0.0},
+  {"placa": null,                "fipe": "HONDA",                                   "semelhanca": 0.0}
+]
