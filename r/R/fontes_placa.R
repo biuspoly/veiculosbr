@@ -5,6 +5,7 @@ ENDERECO_TABELAFIPEBRASIL = "https://www.tabelafipebrasil.com/placa/"
 ENDERECO_PARALLELUM_PLACA = "https://fipe.parallelum.com.br/api/v2/plates/"
 FONTE_TABELAFIPEBRASIL = "tabelafipebrasil.com (p\u00e1gina p\u00fablica de placa)"
 FONTE_PARALLELUM_PLACA = "Parallelum, busca por placa (fipe.parallelum.com.br)"
+TEXTO_PLACA_NAO_ENCONTRADA = "placa n\u00e3o encontrada"
 TIPO_PELO_SEGMENTO = c(AUTO = "carros", MOTO = "motos", CAMINHAO = "caminhoes")
 FONTES_DE_PLACA = c("tabelafipebrasil", "parallelum")
 
@@ -39,7 +40,7 @@ placa_consultar = function(placa, fontes = "tabelafipebrasil") {
       consulta$falhas = falhas
       return(consulta)
     }
-    falhas = c(falhas, paste0(nome_da_fonte, ": placa n\u00e3o encontrada"))
+    falhas = c(falhas, paste0(nome_da_fonte, ": ", TEXTO_PLACA_NAO_ENCONTRADA))
   }
   list(veiculo = NULL, fipe = fipe_da_fonte_vazio(), avisos = avisos, falhas = falhas)
 }

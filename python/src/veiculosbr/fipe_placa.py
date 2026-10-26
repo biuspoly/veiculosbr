@@ -32,7 +32,13 @@ from .fipe import (
     fipe_preco,
     fipe_preco_do_modelo,
 )
-from .fontes_placa import FONTES_PADRAO, Veiculo, placa_consultar, tipo_pelo_segmento
+from .fontes_placa import (
+    FONTES_PADRAO,
+    TEXTO_PLACA_NAO_ENCONTRADA,
+    Veiculo,
+    placa_consultar,
+    tipo_pelo_segmento,
+)
 from .placa import placa_limpar
 from .rede import ErroDeConsulta
 from .semelhanca import palavras_do_nome, semelhanca
@@ -80,7 +86,7 @@ def fipe_por_placa(placa, fontes=FONTES_PADRAO, conferir: bool = True,
     resultado = ResultadoFipePorPlaca(placa=placa_limpar(placa), veiculo=consulta.veiculo,
                                       avisos=list(consulta.avisos), falhas=list(consulta.falhas))
     if consulta.veiculo is None:
-        resultado.avisos.append("Placa não encontrada em nenhuma fonte.")
+        resultado.avisos.append(_aviso_sem_veiculo(consulta.falhas))
         return resultado
 
     veiculo = consulta.veiculo
@@ -110,6 +116,14 @@ def fipe_por_placa(placa, fontes=FONTES_PADRAO, conferir: bool = True,
         resultado.avisos.append(f"{len(resultado.candidatos)} preços da FIPE podem ser deste veículo: "
                                 "todos estão na lista.")
     return resultado
+
+
+def _aviso_sem_veiculo(falhas: list[str]) -> str:
+    # Só é "não encontrada" quando alguma fonte respondeu dizendo isso; site que recusou não respondeu nada.
+    if any(falha.endswith(TEXTO_PLACA_NAO_ENCONTRADA) for falha in falhas):
+        return "Placa não encontrada nas fontes que responderam."
+    return ("Nenhuma fonte respondeu agora, então a placa nem chegou a ser consultada: "
+            "veja as falhas e tente mais tarde.")
 
 
 def fipe_candidatos(tipo: str, marca, modelo, ano_modelo: int | None, combustivel=None,

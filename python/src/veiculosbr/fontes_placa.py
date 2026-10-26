@@ -29,6 +29,7 @@ ENDERECO_TABELAFIPEBRASIL = "https://www.tabelafipebrasil.com/placa/{placa}"
 ENDERECO_PARALLELUM_PLACA = "https://fipe.parallelum.com.br/api/v2/plates/{placa}"
 FONTE_TABELAFIPEBRASIL = "tabelafipebrasil.com (página pública de placa)"
 FONTE_PARALLELUM_PLACA = "Parallelum, busca por placa (fipe.parallelum.com.br)"
+TEXTO_PLACA_NAO_ENCONTRADA = "placa não encontrada"
 TIPO_PELO_SEGMENTO = {"AUTO": "carros", "MOTO": "motos", "CAMINHAO": "caminhoes"}
 
 
@@ -188,7 +189,7 @@ def placa_consultar(placa, fontes=FONTES_PADRAO) -> ConsultaDePlaca:
         if consulta is not None and consulta.veiculo is not None:
             consulta.avisos, consulta.falhas = avisos, falhas
             return consulta
-        falhas.append(f"{nome_da_fonte}: placa não encontrada")
+        falhas.append(f"{nome_da_fonte}: {TEXTO_PLACA_NAO_ENCONTRADA}")
     return ConsultaDePlaca(veiculo=None, avisos=avisos, falhas=falhas)
 
 

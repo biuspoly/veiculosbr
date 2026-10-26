@@ -43,7 +43,13 @@
    "placa": "ZZE5F67", "fontes": ["tabelafipebrasil"], "conferir": true,
    "encontrou": false, "marca": null, "ano_modelo_do_veiculo": null,
    "candidatos": [],
-   "aviso_contem": ["Placa não encontrada em nenhuma fonte"]},
+   "aviso_contem": ["Placa não encontrada nas fontes que responderam"]},
+
+  {"descricao": "a fonte não responde (o site recusou): não é 'não encontrada'",
+   "placa": "ZZG7H89", "fontes": ["tabelafipebrasil"], "conferir": true,
+   "encontrou": false, "marca": null, "ano_modelo_do_veiculo": null,
+   "candidatos": [],
+   "aviso_contem": ["Nenhuma fonte respondeu agora"], "falha_contem": ["tabelafipebrasil"]},
 
   {"descricao": "Parallelum sem tipo e só com o ano de fabricação: tipo pelo catálogo, os dois anos",
    "placa": "ZZF6G78", "fontes": ["parallelum"], "conferir": true,

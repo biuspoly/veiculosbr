@@ -78,7 +78,7 @@ fipe_por_placa = function(placa, fontes = "tabelafipebrasil", conferir = TRUE,
     falhas = consulta$falhas
   )
   if (is.null(consulta$veiculo)) {
-    resultado$avisos = c(resultado$avisos, "Placa n\u00e3o encontrada em nenhuma fonte.")
+    resultado$avisos = c(resultado$avisos, aviso_sem_veiculo(resultado$falhas))
     return(resultado)
   }
 
@@ -208,6 +208,17 @@ fipe_candidatos = function(tipo, marca, modelo, ano_modelo, combustivel = NA,
   })
   candidatos = Filter(Negate(is.null), candidatos)
   if (length(candidatos) == 0) candidatos_vazios() else do.call(rbind, candidatos)
+}
+
+# Só é "não encontrada" quando alguma fonte respondeu dizendo isso; site que recusou não respondeu nada.
+aviso_sem_veiculo = function(falhas) {
+  if (any(endsWith(falhas, TEXTO_PLACA_NAO_ENCONTRADA))) {
+    return("Placa n\u00e3o encontrada nas fontes que responderam.")
+  }
+  paste0(
+    "Nenhuma fonte respondeu agora, ent\u00e3o a placa nem chegou a ser consultada: ",
+    "veja as falhas e tente mais tarde."
+  )
 }
 
 candidatos_vazios = function() {
