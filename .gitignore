@@ -1,0 +1,19 @@
+# R
+.Rproj.user/
+.Rhistory
+.RData
+r/*.tar.gz
+*.Rcheck/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+python/dist/
+.pytest_cache/
+.ruff_cache/
+
+# segredos e cache local
+.env
+.Renviron
+cache/
