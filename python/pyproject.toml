@@ -6,7 +6,7 @@ readme = "README.md"
 # O código é MIT; a tabela de faixas por estado (dados/faixas_uf.csv) vem da Wikipédia, CC BY-SA.
 license = "MIT AND CC-BY-SA-4.0"
 license-files = ["LICENSE", "src/veiculosbr/dados/LEIAME.md"]
-authors = [{ name = "Marlon Hesly", email = "marlonhesly@gmail.com" }]
+authors = [{ name = "Marlon Amaral", email = "marlonsouzapro@outlook.com" }]
 requires-python = ">=3.10"
 dependencies = [
     "httpx>=0.27",

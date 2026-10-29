@@ -61,11 +61,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Marlon Hesly \email{marlonhesly@gmail.com}
+\strong{Maintainer}: Marlon Amaral \email{marlonsouzapro@outlook.com}
 
 Authors:
 \itemize{
-  \item Marlon Hesly \email{marlonhesly@gmail.com}
+  \item Marlon Amaral \email{marlonsouzapro@outlook.com}
 }
 
 }

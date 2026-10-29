@@ -1,7 +1,7 @@
 Package: veiculosbr
 Title: Placa, RENAVAM e Preço FIPE de Veículos Brasileiros
 Version: 0.1.0
-Authors@R: person("Marlon", "Hesly", email = "marlonhesly@gmail.com", role = c("aut", "cre"))
+Authors@R: person("Marlon", "Amaral", email = "marlonsouzapro@outlook.com", role = c("aut", "cre"))
 Description: Confere e converte placas de veículo (antiga e Mercosul) e diz o
     estado de origem pela faixa de letras; confere o RENAVAM; consulta a
     tabela FIPE (Fundação Instituto de Pesquisas Econômicas) pela API pública
