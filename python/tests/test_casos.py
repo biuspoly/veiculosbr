@@ -5,6 +5,7 @@ from conftest import ler_casos
 
 from veiculosbr import (
     fipe_por_placa,
+    fipe_precos_da_marca,
     placa_formatar,
     placa_para_antiga,
     placa_para_mercosul,
@@ -59,3 +60,12 @@ def test_fipe_por_placa(caso):
     todas_as_falhas = " | ".join(resultado.falhas)
     for trecho in caso.get("falha_contem", []):
         assert trecho in todas_as_falhas
+
+
+@pytest.mark.parametrize("caso", ler_casos("fipe_precos_da_marca.json"), ids=lambda caso: caso["descricao"])
+def test_fipe_precos_da_marca(caso):
+    precos = fipe_precos_da_marca(caso["tipo"], caso["marca"], caso["ano"])
+    obtidos = [{campo: getattr(preco, campo) for campo in esperado}
+               for preco, esperado in zip(precos, caso["precos"])]
+    assert len(precos) == len(caso["precos"])
+    assert obtidos == caso["precos"]

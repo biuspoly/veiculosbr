@@ -68,6 +68,7 @@ placa_uf("PIA1B11")                                 # "PI": emplacada no Piauí
 renavam_valido("94613459057")                       # TRUE
 
 fipe_preco("caminhoes", "515134-1", 2018)           # o preço de outubro/2026, com a fonte
+fipe_precos_da_marca("motos", "80", 2005)           # as 24 motos da Honda de 2005, com o código FIPE
 
 resultado = fipe_por_placa("ABC1D23")
 resultado$veiculo      # marca, modelo, ano, cidade... e de qual site veio
@@ -82,6 +83,7 @@ import veiculosbr as vb
 vb.placa_para_mercosul("MUA5678")          # 'MUA5G78'
 vb.placa_uf("PIA1B11")                     # 'PI'
 vb.fipe_preco("caminhoes", "515134-1", 2018)
+vb.fipe_precos_da_marca("motos", "80", 2005)   # lista de PrecoFipe, um por modelo
 
 resultado = vb.fipe_por_placa("ABC1D23")
 for candidato in resultado.candidatos:
@@ -100,8 +102,14 @@ Pela linha de comando: `python -m veiculosbr ABC1D23` mostra tudo o que o pacote
 | `placa_uf` | o estado que recebeu a faixa de letras (onde foi emplacada pela primeira vez) |
 | `renavam_valido` | se o dígito do RENAVAM confere |
 | `fipe_marcas`, `fipe_modelos`, `fipe_anos`, `fipe_preco` | a tabela FIPE pelo catálogo |
+| `fipe_precos_da_marca` | o preço de todos os modelos de uma marca num ano, com o código FIPE de cada um |
 | `fipe_candidatos` | os modelos da FIPE parecidos com uma marca e um modelo, num ano |
 | `fipe_por_placa` | tudo junto: o veículo pela placa e os candidatos FIPE |
+
+O código que `fipe_modelos` devolve é o do modelo no catálogo, não o código FIPE que `fipe_anos` e
+`fipe_preco` pedem. Para o preço de todos os modelos de uma marca, use `fipe_precos_da_marca`: ela faz uma
+consulta por modelo (só de caminhão da VW, são 42 em 2018), então pesa na cota de 1.000 consultas por
+dia. Não há função para a tabela inteira: seriam dezenas de milhares de consultas.
 
 ### A confiança de cada candidato
 

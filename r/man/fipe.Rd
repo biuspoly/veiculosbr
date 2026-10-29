@@ -6,6 +6,7 @@
 \alias{fipe_modelos}
 \alias{fipe_anos}
 \alias{fipe_preco}
+\alias{fipe_precos_da_marca}
 \title{Tabela FIPE pelo catálogo}
 \source{
 \url{https://fipe.parallelum.com.br/api/v2}, que repete a tabela de
@@ -19,6 +20,8 @@ fipe_modelos(tipo, marca)
 fipe_anos(tipo, codigo_fipe)
 
 fipe_preco(tipo, codigo_fipe, ano)
+
+fipe_precos_da_marca(tipo, marca, ano)
 }
 \arguments{
 \item{tipo}{\code{"carros"}, \code{"motos"} ou \code{"caminhoes"}.}
@@ -44,11 +47,16 @@ consulta feita de novo na mesma sessão não volta à internet.
 \details{
 \itemize{
 \item \code{fipe_marcas()}: as marcas de um tipo de veículo.
-\item \code{fipe_modelos()}: os modelos de uma marca.
+\item \code{fipe_modelos()}: os modelos de uma marca. O \code{codigo} é o do modelo no
+catálogo, não o código FIPE: o preço de todos sai de \code{fipe_precos_da_marca()}.
 \item \code{fipe_anos()}: os anos (com o combustível, ex. \code{2018-3}) de um código FIPE.
 \item \code{fipe_preco()}: o preço de um código FIPE num ano. \code{ano = 2018} traz todos
 os combustíveis daquele ano; \code{ano = "2018-3"} só aquele. O ano 32000 é a
 convenção da FIPE para o veículo zero quilômetro.
+\item \code{fipe_precos_da_marca()}: o preço de todos os modelos de uma marca num ano,
+com o código FIPE de cada um (o \code{ano} como em \code{fipe_preco()}). Faz uma
+consulta por modelo, mais uma ou duas: uma marca grande gasta uma boa parte
+da cota do dia.
 }
 }
 \examples{
@@ -56,5 +64,6 @@ convenção da FIPE para o veículo zero quilômetro.
 # Vão à internet (API do Parallelum)
 marcas = fipe_marcas("caminhoes")
 fipe_preco("caminhoes", "515134-1", 2018)
+fipe_precos_da_marca("motos", "80", 2005)
 }
 }

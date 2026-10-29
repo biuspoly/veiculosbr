@@ -100,6 +100,21 @@ def fipe_preco(tipo: str, codigo_fipe: str, ano) -> list[PrecoFipe]:
     return precos
 
 
+def fipe_precos_da_marca(tipo: str, marca: str, ano) -> list[PrecoFipe]:
+    """Os preços de todos os modelos da marca num ano, já com o código FIPE de cada um.
+
+    Uma consulta por modelo (mais uma ou duas), então pesa na cota diária. ano: 2018
+    traz todos os combustíveis daquele ano; '2018-3' traz só aquele.
+    """
+    precos = []
+    for codigo_do_ano in _codigos_do_ano(fipe_anos_da_marca(tipo, marca), ano):
+        for modelo in fipe_modelos_do_ano(tipo, marca, codigo_do_ano):
+            preco = fipe_preco_do_modelo(tipo, marca, modelo.codigo, codigo_do_ano)
+            if preco is not None:
+                precos.append(preco)
+    return precos
+
+
 def fipe_preco_do_modelo(tipo: str, marca: str, modelo: str, ano: str) -> PrecoFipe | None:
     """O preço pelo código do modelo (não o código FIPE), como a busca de candidatos acha."""
     detalhe = _consultar(f"/{_tipo_na_api(tipo)}/brands/{marca}/models/{modelo}/years/{ano}")

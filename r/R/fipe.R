@@ -16,11 +16,16 @@ CODIGO_DO_COMBUSTIVEL = c(GASOLINA = "1", FLEX = "1", ALCOOL = "2", ETANOL = "2"
 #' consulta feita de novo na mesma sessão não volta à internet.
 #'
 #' - `fipe_marcas()`: as marcas de um tipo de veículo.
-#' - `fipe_modelos()`: os modelos de uma marca.
+#' - `fipe_modelos()`: os modelos de uma marca. O `codigo` é o do modelo no
+#'   catálogo, não o código FIPE: o preço de todos sai de `fipe_precos_da_marca()`.
 #' - `fipe_anos()`: os anos (com o combustível, ex. `2018-3`) de um código FIPE.
 #' - `fipe_preco()`: o preço de um código FIPE num ano. `ano = 2018` traz todos
 #'   os combustíveis daquele ano; `ano = "2018-3"` só aquele. O ano 32000 é a
 #'   convenção da FIPE para o veículo zero quilômetro.
+#' - `fipe_precos_da_marca()`: o preço de todos os modelos de uma marca num ano,
+#'   com o código FIPE de cada um (o `ano` como em `fipe_preco()`). Faz uma
+#'   consulta por modelo, mais uma ou duas: uma marca grande gasta uma boa parte
+#'   da cota do dia.
 #'
 #' @param tipo `"carros"`, `"motos"` ou `"caminhoes"`.
 #' @param marca O código da marca (coluna `codigo` de `fipe_marcas()`).
@@ -36,6 +41,7 @@ CODIGO_DO_COMBUSTIVEL = c(GASOLINA = "1", FLEX = "1", ALCOOL = "2", ETANOL = "2"
 #' # Vão à internet (API do Parallelum)
 #' marcas = fipe_marcas("caminhoes")
 #' fipe_preco("caminhoes", "515134-1", 2018)
+#' fipe_precos_da_marca("motos", "80", 2005)
 #' }
 #' @name fipe
 NULL
@@ -78,17 +84,35 @@ fipe_anos = function(tipo, codigo_fipe) {
 #' @rdname fipe
 #' @export
 fipe_preco = function(tipo, codigo_fipe, ano) {
-  anos = fipe_anos(tipo, codigo_fipe)
-  if (is.character(ano) && grepl("-", ano, fixed = TRUE)) {
-    codigos_do_ano = anos$codigo[anos$codigo == ano]
-  } else {
-    codigos_do_ano = anos$codigo[sub("-.*$", "", anos$codigo) == as.character(ano)]
-  }
+  codigos_do_ano = filtrar_codigos_do_ano(fipe_anos(tipo, codigo_fipe), ano)
   precos = lapply(codigos_do_ano, function(codigo_do_ano) {
     detalhe = consultar_catalogo(paste0("/", tipo_na_api(tipo), "/", codigo_fipe, "/years/", codigo_do_ano))
     preco_do_detalhe(detalhe)
   })
   juntar_precos(precos)
+}
+
+#' @rdname fipe
+#' @export
+fipe_precos_da_marca = function(tipo, marca, ano) {
+  precos = list()
+  for (codigo_do_ano in filtrar_codigos_do_ano(fipe_anos_da_marca(tipo, marca), ano)) {
+    modelos = fipe_modelos_do_ano(tipo, marca, codigo_do_ano)
+    for (modelo in modelos$codigo) {
+      precos[[length(precos) + 1]] = fipe_preco_do_modelo(tipo, marca, modelo, codigo_do_ano)
+    }
+  }
+  juntar_precos(precos)
+}
+
+# ano = 2018 fica com todos os combustíveis daquele ano; "2018-3", só com aquele.
+filtrar_codigos_do_ano = function(anos, ano) {
+  if (is.character(ano) && grepl("-", ano, fixed = TRUE)) {
+    codigos = anos$codigo[anos$codigo == ano]
+  } else {
+    codigos = anos$codigo[sub("-.*$", "", anos$codigo) == as.character(ano)]
+  }
+  codigos
 }
 
 # O preço pelo código do modelo (não o código FIPE), como a busca de candidatos acha.

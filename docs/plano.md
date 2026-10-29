@@ -19,12 +19,15 @@ O que o veiculosbr faz a mais que o `brutils`: converte a placa nos dois sentido
 faixa de letras e tem o FIPE pela placa com todos os candidatos.
 O RENAVAM foi conferido contra o `brutils` em 20.000 números aleatórios, sem nenhuma diferença.
 
-## O que o pacote faz (as 13 funções públicas)
+## O que o pacote faz (as 14 funções públicas)
 
 1. **Placa**: `placa_valida`, `placa_tipo`, `placa_para_mercosul`, `placa_para_antiga`, `placa_formatar`,
    `placa_uf`.
 2. **RENAVAM**: `renavam_valido` (aceita o antigo, de 9 dígitos).
-3. **FIPE pelo catálogo**: `fipe_marcas`, `fipe_modelos`, `fipe_anos`, `fipe_preco`, pela API v2 do Parallelum.
+3. **FIPE pelo catálogo**: `fipe_marcas`, `fipe_modelos`, `fipe_anos`, `fipe_preco`, pela API v2 do Parallelum,
+   e `fipe_precos_da_marca` (29/10/2026, a pedido do usuário): `fipe_modelos` devolve o código do modelo,
+   não o FIPE, e não havia caminho público do modelo ao preço. Uma consulta por modelo; a tabela inteira
+   (dezenas de milhares de consultas, para 1.000 por dia) continua fora.
 4. **FIPE pela placa**: `fipe_por_placa` (a cascata) e `fipe_candidatos` (a busca por nome parecido):
    - os códigos que a fonte da placa mostra são conferidos no catálogo, no ano-modelo do veículo;
    - sem código na fonte, entram todos os modelos da marca naquele ano a até 0,15 da nota do melhor (piso

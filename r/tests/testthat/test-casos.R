@@ -62,3 +62,18 @@ test_that("FIPE pela placa", {
     }
   }
 })
+
+test_that("pre\u00e7os da marca", {
+  for (caso in ler_casos("fipe_precos_da_marca.json")) {
+    rotulo = caso$descricao
+    precos = fipe_precos_da_marca(caso$tipo, caso$marca, caso$ano)
+
+    expect_identical(nrow(precos), length(caso$precos), label = rotulo)
+    for (posicao in seq_along(caso$precos)) {
+      esperado = caso$precos[[posicao]]
+      expect_identical(precos$codigo_fipe[posicao], esperado$codigo_fipe, label = rotulo)
+      expect_identical(precos$ano_modelo[posicao], esperado$ano_modelo, label = rotulo)
+      expect_equal(precos$preco[posicao], esperado$preco, label = rotulo)
+    }
+  }
+})

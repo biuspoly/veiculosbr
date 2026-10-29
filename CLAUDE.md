@@ -39,7 +39,7 @@ Testar:
   26/10/2026); a lista de fontes aceitas e recusadas fica em `docs/plano.md`.
 - **Nada é gravado em disco** (decisão do usuário: "é consulta, não quero salvar nada"). Só a memória da
   sessão, para não repetir a mesma consulta.
-- **Lista pública enxuta**: 13 funções, as mesmas nas duas linguagens (veja o README). Peça interna fica
+- **Lista pública enxuta**: 14 funções, as mesmas nas duas linguagens (veja o README). Peça interna fica
   interna; função nova pública só se o usuário pedir.
 - **FIPE pela placa pode estar errada, e o pacote diz isso.** Todo resultado traz a fonte, a confiança e
   TODOS os candidatos de FIPE quando houver mais de um, nunca só o "melhor".
