@@ -2,8 +2,9 @@
 
 0 errors | 0 warnings | 1 note
 
-* This is a new release. It replaces an unconfirmed submission of the same version made earlier today
-  (29/10/2026) under another maintainer name and address, which were wrong; please disregard that one.
+* This is a new release. Version 0.1.1 replaces version 0.1.0, submitted earlier today (29/10/2026) and
+  confirmed by mistake: its maintainer name and address (Marlon Hesly <marlonhesly@gmail.com>) are wrong.
+  Please discard 0.1.0. Both addresses belong to me, and the code is the same.
 
 Checked with `R CMD check --as-cran` on Windows 11, R 4.6.1.
 

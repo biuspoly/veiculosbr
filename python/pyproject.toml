@@ -1,6 +1,6 @@
 [project]
 name = "veiculosbr"
-version = "0.1.0"
+version = "0.1.1"
 description = "Placa (antiga e Mercosul), RENAVAM e preço FIPE, inclusive pela placa"
 readme = "README.md"
 # O código é MIT; a tabela de faixas por estado (dados/faixas_uf.csv) vem da Wikipédia, CC BY-SA.

@@ -6,8 +6,9 @@ nada") e só 13 funções públicas. O R passa no `R CMD check --as-cran`
 sem erro, aviso ou nota; o Python passa no pytest e no ruff. Os dois conferem os mesmos casos de `casos/`.
 
 Publicação (29/10/2026): o repositório ficou público (o histórico foi reescrito antes, para tirar uma placa
-real de uma mensagem de commit e o que o `origem.md` contava do projeto da empresa) e a versão 0.1.0 foi
-enviada ao CRAN (falta a confirmação do mantenedor por e-mail e a revisão). O PyPI espera as contas e os
+real de uma mensagem de commit e o que o `origem.md` contava do projeto da empresa) e a versão 0.1.1 foi
+enviada ao CRAN (falta a confirmação do mantenedor por e-mail e a revisão). A 0.1.1 só existe porque a
+0.1.0, enviada antes com o nome e o e-mail do mantenedor errados, foi confirmada por engano e ocupou a fila. O PyPI espera as contas e os
 tokens do usuário: primeiro o TestPyPI, depois o PyPI.
 
 ## O que já existia antes

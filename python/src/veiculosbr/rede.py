@@ -17,7 +17,7 @@ from urllib.parse import urlsplit
 
 import httpx
 
-VERSAO = "0.1.0"
+VERSAO = "0.1.1"
 ROBO = f"veiculosbr/{VERSAO} (+https://github.com/biuspoly/veiculosbr)"
 SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE = {
     "www.tabelafipebrasil.com": 3.0,
