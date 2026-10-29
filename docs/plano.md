@@ -4,7 +4,11 @@ Situação em 26/10/2026: **versão 0.1.0 pronta nas duas linguagens.** Enxugada
 usuário: sem chassi, sem conferência de `robots.txt`, sem cache em disco ("é consulta, não quero salvar
 nada") e só 13 funções públicas. O R passa no `R CMD check --as-cran`
 sem erro, aviso ou nota; o Python passa no pytest e no ruff. Os dois conferem os mesmos casos de `casos/`.
-Ainda não publicado (repositório privado).
+
+Publicação (29/10/2026): o repositório ficou público (o histórico foi reescrito antes, para tirar uma placa
+real de uma mensagem de commit e o que o `origem.md` contava do projeto da empresa) e a versão 0.1.0 foi
+enviada ao CRAN (falta a confirmação do mantenedor por e-mail e a revisão). O PyPI espera as contas e os
+tokens do usuário: primeiro o TestPyPI, depois o PyPI.
 
 ## O que já existia antes
 
@@ -75,7 +79,7 @@ placafipe.com.br.
 
 ## Próximos passos
 
-1. Tornar o repositório público e publicar: r-universe e PyPI primeiro; CRAN depois (tem revisão humana).
+1. Terminar a publicação: a revisão do CRAN (responder o que o revisor pedir) e o PyPI; depois, o r-universe.
 2. Uma página de demonstração no site de portfólio (`biuspoly/portfolio`).
 3. Testar o placafipe.com.br numa máquina com o Chrome instalado; se funcionar, entra como fonte opcional.
 4. Refazer `dados/` quando o Senatran distribuir faixas novas (a tabela é a de janeiro de 2025).
