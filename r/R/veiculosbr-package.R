@@ -27,12 +27,15 @@
 #'
 #' @section Boa conduta com os sites:
 #' O pacote se identifica (`veiculosbr/<versão>` e o endereço do repositório),
-#' espera 3 segundos entre consultas ao mesmo site e, quando um site recusa
-#' (limite de consultas), fica 10 minutos sem consultá-lo.
+#' espera entre duas consultas ao mesmo site (3 segundos no tabelafipebrasil;
+#' 1,5 no Parallelum, que aceita até 50 por minuto) e, quando um site recusa
+#' (limite de consultas), fica 10 minutos sem consultá-lo. O catálogo FIPE do
+#' Parallelum dá 500 consultas por dia sem token.
 #'
 #' @section Variáveis de ambiente:
 #' - `VEICULOSBR_FIPE_TOKEN`: o token gratuito de <https://fipe.api.br>, que
-#'   aumenta o limite da API do Parallelum.
+#'   sobe o limite do catálogo de 500 para 1.000 consultas por dia e o da busca
+#'   por placa de 5 para 10 por mês.
 #' - `VEICULOSBR_RESPOSTAS_GRAVADAS`: usada pelos testes, lê as respostas de
 #'   uma pasta em vez de ir à internet.
 #'

@@ -2,8 +2,9 @@
 
 Fonte: a API pública do Parallelum (https://fipe.parallelum.com.br/api/v2),
 que repete os dados da Fundação Instituto de Pesquisas Econômicas (FIPE).
-Sem token: 1.000 consultas por dia. Com o token gratuito de https://fipe.api.br
-na variável VEICULOSBR_FIPE_TOKEN, o limite sobe.
+Sem token: 500 consultas por dia. Com o token gratuito de https://fipe.api.br
+na variável VEICULOSBR_FIPE_TOKEN, 1.000 (https://fipe.api.br/docs/api). Entre
+duas consultas, o pacote espera 1,5 s: o catálogo aceita até 50 por minuto.
 """
 
 from __future__ import annotations
@@ -103,7 +104,8 @@ def fipe_preco(tipo: str, codigo_fipe: str, ano) -> list[PrecoFipe]:
 def fipe_precos_da_marca(tipo: str, marca: str, ano) -> list[PrecoFipe]:
     """Os preços de todos os modelos da marca num ano, já com o código FIPE de cada um.
 
-    Uma consulta por modelo (mais uma ou duas), então pesa na cota diária. ano: 2018
+    Uma consulta por modelo (mais uma ou duas): uma marca grande leva mais de um minuto e
+    pesa na cota diária. ano: 2018
     traz todos os combustíveis daquele ano; '2018-3' traz só aquele.
     """
     precos = []

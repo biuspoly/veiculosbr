@@ -4,7 +4,11 @@
 # memória, e some quando o R fecha. Nos testes, as respostas vêm de arquivos
 # (variável VEICULOSBR_RESPOSTAS_GRAVADAS).
 
-SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE = 3
+SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE = c(
+  "www.tabelafipebrasil.com" = 3,
+  # O Parallelum aceita 50 consultas por minuto (cabeçalho x-throttle-limit); 1,5 s deixa em 40.
+  "fipe.parallelum.com.br" = 1.5
+)
 SEGUNDOS_DE_ESPERA_DA_RESPOSTA = 30
 TENTATIVAS = 2
 SEGUNDOS_ANTES_DE_TENTAR_DE_NOVO = 2
@@ -46,7 +50,7 @@ site_do_endereco = function(endereco) {
   sub("^https?://([^/]+).*$", "\\1", endereco)
 }
 
-baixar = function(endereco, cabecalhos = list(), respeitar_ritmo = FALSE) {
+baixar = function(endereco, cabecalhos = list()) {
   pasta_gravadas = Sys.getenv("VEICULOSBR_RESPOSTAS_GRAVADAS")
   if (pasta_gravadas != "") {
     arquivo = file.path(pasta_gravadas, nome_do_arquivo_gravado(endereco))
@@ -72,10 +76,7 @@ baixar = function(endereco, cabecalhos = list(), respeitar_ritmo = FALSE) {
     stop(erro_de_consulta(paste0(site, " recusou consultas h\u00e1 pouco; nova tentativa em ", minutos, " min")))
   }
 
-  if (respeitar_ritmo) {
-    esperar_a_vez_do_site(site)
-  }
-
+  esperar_a_vez_do_site(site)
   resposta = consultar_com_nova_tentativa(endereco, cabecalhos)
   status = httr2::resp_status(resposta)
   texto = httr2::resp_body_string(resposta, encoding = "UTF-8")
@@ -141,9 +142,13 @@ agora = function() {
 }
 
 esperar_a_vez_do_site = function(site) {
+  intervalo = 0
+  if (site %in% names(SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE)) {
+    intervalo = SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE[[site]]
+  }
   ultima = estado_da_rede$ultima_consulta[[site]]
   if (!is.null(ultima)) {
-    falta = SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE - (agora() - ultima)
+    falta = intervalo - (agora() - ultima)
     if (falta > 0) {
       Sys.sleep(falta)
     }

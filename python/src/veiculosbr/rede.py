@@ -19,7 +19,11 @@ import httpx
 
 VERSAO = "0.1.0"
 ROBO = f"veiculosbr/{VERSAO} (+https://github.com/biuspoly/veiculosbr)"
-SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE = 3.0
+SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE = {
+    "www.tabelafipebrasil.com": 3.0,
+    # O Parallelum aceita 50 consultas por minuto (cabeçalho x-throttle-limit); 1,5 s deixa em 40.
+    "fipe.parallelum.com.br": 1.5,
+}
 SEGUNDOS_DE_ESPERA_DA_RESPOSTA = 30
 TENTATIVAS = 2
 SEGUNDOS_ANTES_DE_TENTAR_DE_NOVO = 2
@@ -63,7 +67,7 @@ def nome_do_arquivo_gravado(endereco: str) -> str:
     return re.sub(r"[^A-Za-z0-9.-]", "_", f"{site}/{caminho}")
 
 
-def baixar(endereco: str, cabecalhos: dict | None = None, respeitar_ritmo: bool = False) -> Resposta:
+def baixar(endereco: str, cabecalhos: dict | None = None) -> Resposta:
     pasta_gravadas = os.environ.get("VEICULOSBR_RESPOSTAS_GRAVADAS", "")
     if pasta_gravadas:
         arquivo = Path(pasta_gravadas) / nome_do_arquivo_gravado(endereco)
@@ -80,9 +84,7 @@ def baixar(endereco: str, cabecalhos: dict | None = None, respeitar_ritmo: bool 
         minutos = round((pausado_ate - time.monotonic()) / 60) or 1
         raise ErroDeConsulta(f"{site} recusou consultas há pouco; nova tentativa em {minutos} min")
 
-    if respeitar_ritmo:
-        _esperar_a_vez_do_site(site)
-
+    _esperar_a_vez_do_site(site)
     resposta = _consultar_com_nova_tentativa(endereco, {"User-Agent": ROBO, **(cabecalhos or {})})
 
     if resposta.status_code in (403, 429):
@@ -126,9 +128,10 @@ def _gravar_se_pedido(endereco: str, texto: str) -> None:
 
 
 def _esperar_a_vez_do_site(site: str) -> None:
+    intervalo = SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE.get(site, 0)
     ultima = _ultima_consulta_por_site.get(site)
     if ultima is not None:
-        falta = SEGUNDOS_ENTRE_CONSULTAS_AO_MESMO_SITE - (time.monotonic() - ultima)
+        falta = intervalo - (time.monotonic() - ultima)
         if falta > 0:
             time.sleep(falta)
     _ultima_consulta_por_site[site] = time.monotonic()

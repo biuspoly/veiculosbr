@@ -27,7 +27,7 @@ O RENAVAM foi conferido contra o `brutils` em 20.000 números aleatórios, sem n
 3. **FIPE pelo catálogo**: `fipe_marcas`, `fipe_modelos`, `fipe_anos`, `fipe_preco`, pela API v2 do Parallelum,
    e `fipe_precos_da_marca` (29/10/2026, a pedido do usuário): `fipe_modelos` devolve o código do modelo,
    não o FIPE, e não havia caminho público do modelo ao preço. Uma consulta por modelo; a tabela inteira
-   (dezenas de milhares de consultas, para 1.000 por dia) continua fora.
+   (dezenas de milhares de consultas, para 500 por dia sem token e 1.000 com ele) continua fora.
 4. **FIPE pela placa**: `fipe_por_placa` (a cascata) e `fipe_candidatos` (a busca por nome parecido):
    - os códigos que a fonte da placa mostra são conferidos no catálogo, no ano-modelo do veículo;
    - sem código na fonte, entram todos os modelos da marca naquele ano a até 0,15 da nota do melhor (piso
@@ -52,7 +52,8 @@ achou os mesmos códigos e preços que o tabelafipebrasil mostrava.
 
 O tabelafipebrasil e o Parallelum devolveram o mesmo veículo (mesmo final de chassi): leem a mesma base.
 
-Regras de toda fonte lida: o robô se identifica, espera 3 s entre consultas ao mesmo site e fica 10 minutos
+Regras de toda fonte lida: o robô se identifica, espera entre consultas ao mesmo site (3 s no tabelafipebrasil;
+1,5 s no Parallelum, que em 29/10/2026 respondia `x-throttle-limit: 50` por minuto) e fica 10 minutos
 sem consultar um site que respondeu 429 ou 403. Nada vai para o disco; a mesma consulta na mesma sessão sai
 da memória. O recurso do `pydoll` de passar pelo Cloudflare **não** é usado: um site com desafio
 está dizendo que não quer robô.

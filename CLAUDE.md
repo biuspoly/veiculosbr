@@ -46,8 +46,10 @@ Testar:
 - **Não gastar cota nem paciência dos sites.** A busca por placa do Parallelum dá 5 consultas por mês sem
   token (a de outubro/2026 já foi gasta em 26/10): nunca usar em teste nem em experimento sem o usuário
   pedir. O tabelafipebrasil.com limita por IP: desenvolver com as respostas gravadas e consultar ao vivo no
-  máximo uma vez para conferir. Para gravar respostas novas do catálogo (que é folgado, 1.000/dia):
-  `VEICULOSBR_GRAVAR_RESPOSTAS=<caminho>/casos/respostas`.
+  máximo uma vez para conferir. Para gravar respostas novas do catálogo (500/dia sem token e 50 por
+  minuto; o pacote espera 1,5 s entre elas): `VEICULOSBR_GRAVAR_RESPOSTAS=<caminho>/casos/respostas`. Os
+  cabeçalhos de limite (`x-ratelimit-*`, `x-throttle-*`) vêm do cache do Cloudflare quando
+  `cf-cache-status: HIT`: são de quando a resposta foi guardada, não da consulta de agora.
 - **CRAN:** strings do código R só em ASCII, com `\u00e3` no lugar do acento (comentário e roxygen podem
   ter acento). Cuidado: a ferramenta de escrita de arquivo transforma `\u00e3` na própria letra; depois de
   escrever um `.R`, conferir com `R CMD check` (ou `tools::showNonASCIIfile`). Caminho de arquivo dentro do

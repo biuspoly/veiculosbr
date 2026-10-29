@@ -75,7 +75,7 @@ def tipo_pelo_segmento(segmento) -> str | None:
 
 def consultar_tabelafipebrasil(placa) -> ConsultaDePlaca | None:
     placa = placa_limpar(placa)
-    resposta = baixar(ENDERECO_TABELAFIPEBRASIL.format(placa=placa), respeitar_ritmo=True)
+    resposta = baixar(ENDERECO_TABELAFIPEBRASIL.format(placa=placa))
     if resposta.status == 404:
         return None
     return ler_pagina_tabelafipebrasil(placa, resposta.texto)

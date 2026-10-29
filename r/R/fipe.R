@@ -10,10 +10,11 @@ CODIGO_DO_COMBUSTIVEL = c(GASOLINA = "1", FLEX = "1", ALCOOL = "2", ETANOL = "2"
 #' Tabela FIPE pelo catálogo
 #'
 #' Consultas à tabela da Fundação Instituto de Pesquisas Econômicas (FIPE)
-#' pela API pública do Parallelum. Sem token, são 1.000 consultas por dia; com
+#' pela API pública do Parallelum. Sem token, são 500 consultas por dia; com
 #' o token gratuito de <https://fipe.api.br> na variável de ambiente
-#' `VEICULOSBR_FIPE_TOKEN`, o limite sobe. Nada é gravado em disco; a mesma
-#' consulta feita de novo na mesma sessão não volta à internet.
+#' `VEICULOSBR_FIPE_TOKEN`, 1.000. Entre duas consultas, o pacote espera 1,5
+#' segundo: o catálogo aceita até 50 por minuto. Nada é gravado em disco; a
+#' mesma consulta feita de novo na mesma sessão não volta à internet.
 #'
 #' - `fipe_marcas()`: as marcas de um tipo de veículo.
 #' - `fipe_modelos()`: os modelos de uma marca. O `codigo` é o do modelo no
@@ -24,8 +25,8 @@ CODIGO_DO_COMBUSTIVEL = c(GASOLINA = "1", FLEX = "1", ALCOOL = "2", ETANOL = "2"
 #'   convenção da FIPE para o veículo zero quilômetro.
 #' - `fipe_precos_da_marca()`: o preço de todos os modelos de uma marca num ano,
 #'   com o código FIPE de cada um (o `ano` como em `fipe_preco()`). Faz uma
-#'   consulta por modelo, mais uma ou duas: uma marca grande gasta uma boa parte
-#'   da cota do dia.
+#'   consulta por modelo, mais uma ou duas: uma marca grande leva mais de um
+#'   minuto e gasta uma boa parte da cota do dia.
 #'
 #' @param tipo `"carros"`, `"motos"` ou `"caminhoes"`.
 #' @param marca O código da marca (coluna `codigo` de `fipe_marcas()`).

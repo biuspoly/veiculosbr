@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 import veiculosbr
-from veiculosbr import fipe_marcas, fipe_preco
+from veiculosbr import fipe_marcas, fipe_preco, rede
 from veiculosbr.fipe import valor_em_reais
 from veiculosbr.fontes_placa import ler_pagina_tabelafipebrasil, placa_consultar, tipo_pelo_segmento
 from veiculosbr.rede import RespostaNaoGravada, baixar, nome_do_arquivo_gravado
@@ -39,6 +39,17 @@ def test_nome_do_arquivo_gravado():
 def test_resposta_que_nao_foi_gravada():
     with pytest.raises(RespostaNaoGravada):
         baixar("https://exemplo.invalido/nada")
+
+
+def test_espera_entre_consultas_ao_mesmo_site(monkeypatch):
+    esperas = []
+    monkeypatch.setattr(rede.time, "sleep", esperas.append)
+    monkeypatch.setattr(rede.time, "monotonic", lambda: 100.0)
+    monkeypatch.setattr(rede, "_ultima_consulta_por_site", {})
+    for site in ["fipe.parallelum.com.br", "www.tabelafipebrasil.com", "exemplo.invalido"]:
+        rede._esperar_a_vez_do_site(site)
+        rede._esperar_a_vez_do_site(site)
+    assert esperas == [1.5, 3.0]
 
 
 def test_pagina_sem_tabela_nao_acha_a_placa():

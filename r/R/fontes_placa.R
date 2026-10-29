@@ -55,7 +55,7 @@ tipo_pelo_segmento = function(segmento) {
 
 consultar_tabelafipebrasil = function(placa) {
   placa = placa_limpar(placa)
-  resposta = baixar(paste0(ENDERECO_TABELAFIPEBRASIL, placa), respeitar_ritmo = TRUE)
+  resposta = baixar(paste0(ENDERECO_TABELAFIPEBRASIL, placa))
   if (resposta$status == 404L) {
     return(NULL)
   }

@@ -36,14 +36,15 @@ estiver aberto sai da memória, sem voltar à internet; ao fechar, some.
 
 ### Boa conduta com os sites
 
-O pacote se identifica (`veiculosbr/<versão>` e o endereço deste repositório), espera 3 segundos entre
-consultas ao mesmo site e, quando um site recusa (limite de consultas), fica 10 minutos sem consultá-lo. Sites
-que se protegem com desafio anti-robô (placafipe.com, keplaca.com) não são usados.
+O pacote se identifica (`veiculosbr/<versão>` e o endereço deste repositório), espera entre duas consultas ao
+mesmo site (3 segundos no tabelafipebrasil; 1,5 no Parallelum, que aceita até 50 por minuto) e, quando um
+site recusa (limite de consultas), fica 10 minutos sem consultá-lo. Sites que se protegem com desafio
+anti-robô (placafipe.com, keplaca.com) não são usados.
 
 **É para consulta avulsa, não em massa.** O tabelafipebrasil.com limita as consultas de placa por endereço de
 internet (em 26/10/2026, pouco mais de uma dezena de consultas numa tarde bastou para ele pedir uma pausa de
-mais de uma hora). A busca por placa do Parallelum dá 5 consultas por **mês** sem token e 10 com o token
-gratuito, por isso só entra quando pedida.
+mais de uma hora). O catálogo FIPE do Parallelum dá 500 consultas por dia sem token e 1.000 com o token
+gratuito; a busca por placa, 5 por **mês** sem token e 10 com ele, por isso só entra quando pedida.
 
 ## Instalar
 
@@ -108,8 +109,8 @@ Pela linha de comando: `python -m veiculosbr ABC1D23` mostra tudo o que o pacote
 
 O código que `fipe_modelos` devolve é o do modelo no catálogo, não o código FIPE que `fipe_anos` e
 `fipe_preco` pedem. Para o preço de todos os modelos de uma marca, use `fipe_precos_da_marca`: ela faz uma
-consulta por modelo (só de caminhão da VW, são 42 em 2018), então pesa na cota de 1.000 consultas por
-dia. Não há função para a tabela inteira: seriam dezenas de milhares de consultas.
+consulta por modelo (só de caminhão da VW, são 42 em 2018), então leva mais de um minuto numa marca grande e
+pesa na cota do dia. Não há função para a tabela inteira: seriam dezenas de milhares de consultas.
 
 ### A confiança de cada candidato
 
@@ -127,7 +128,7 @@ possíveis (o veículo fabricado em 2017 pode ser modelo 2017 ou 2018).
 
 | Variável | Para quê |
 |---|---|
-| `VEICULOSBR_FIPE_TOKEN` | o token gratuito de [fipe.api.br](https://fipe.api.br): aumenta o limite do Parallelum |
+| `VEICULOSBR_FIPE_TOKEN` | o token gratuito de [fipe.api.br](https://fipe.api.br): sobe o limite do catálogo de 500 para 1.000 consultas por dia, e o da busca por placa de 5 para 10 por mês |
 | `VEICULOSBR_RESPOSTAS_GRAVADAS` | usada pelos testes: lê as respostas de uma pasta em vez de ir à internet |
 
 ## Como o repositório se organiza

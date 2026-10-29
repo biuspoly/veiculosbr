@@ -39,10 +39,11 @@ tabela) e \code{fonte}.
 }
 \description{
 Consultas à tabela da Fundação Instituto de Pesquisas Econômicas (FIPE)
-pela API pública do Parallelum. Sem token, são 1.000 consultas por dia; com
+pela API pública do Parallelum. Sem token, são 500 consultas por dia; com
 o token gratuito de \url{https://fipe.api.br} na variável de ambiente
-\code{VEICULOSBR_FIPE_TOKEN}, o limite sobe. Nada é gravado em disco; a mesma
-consulta feita de novo na mesma sessão não volta à internet.
+\code{VEICULOSBR_FIPE_TOKEN}, 1.000. Entre duas consultas, o pacote espera 1,5
+segundo: o catálogo aceita até 50 por minuto. Nada é gravado em disco; a
+mesma consulta feita de novo na mesma sessão não volta à internet.
 }
 \details{
 \itemize{
@@ -55,8 +56,8 @@ os combustíveis daquele ano; \code{ano = "2018-3"} só aquele. O ano 32000 é a
 convenção da FIPE para o veículo zero quilômetro.
 \item \code{fipe_precos_da_marca()}: o preço de todos os modelos de uma marca num ano,
 com o código FIPE de cada um (o \code{ano} como em \code{fipe_preco()}). Faz uma
-consulta por modelo, mais uma ou duas: uma marca grande gasta uma boa parte
-da cota do dia.
+consulta por modelo, mais uma ou duas: uma marca grande leva mais de um
+minuto e gasta uma boa parte da cota do dia.
 }
 }
 \examples{
