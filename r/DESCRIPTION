@@ -4,11 +4,13 @@ Version: 0.1.0
 Authors@R: person("Marlon", "Hesly", email = "marlonhesly@gmail.com", role = c("aut", "cre"))
 Description: Confere e converte placas de veículo (antiga e Mercosul) e diz o
     estado de origem pela faixa de letras; confere o RENAVAM; consulta a
-    tabela FIPE pela API pública do
-    Parallelum e estima o preço FIPE a partir da placa, devolvendo todos os
-    candidatos quando houver dúvida, com a fonte e o grau de confiança de cada
-    um. Os mesmos casos de teste valem para a versão em Python.
+    tabela FIPE (Fundação Instituto de Pesquisas Econômicas) pela API pública
+    do 'Parallelum' <https://fipe.parallelum.com.br> e estima o preço FIPE a
+    partir da placa, devolvendo todos os candidatos quando houver dúvida, com
+    a fonte e o grau de confiança de cada um. Os mesmos casos de teste valem
+    para a versão em Python.
 License: MIT + file LICENSE
+Copyright: veja o arquivo inst/COPYRIGHTS
 URL: https://github.com/biuspoly/veiculosbr
 BugReports: https://github.com/biuspoly/veiculosbr/issues
 Encoding: UTF-8

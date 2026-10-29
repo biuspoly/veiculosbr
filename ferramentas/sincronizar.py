@@ -1,8 +1,9 @@
-"""Copia dados/ e casos/ para dentro dos dois pacotes.
+"""Copia dados/ e casos/ para dentro dos dois pacotes, e o README e a LICENSE para o do Python.
 
 Cada pacote precisa da sua cópia (o R instala só o que está em r/, o Python só
-o que está em python/src/). A fonte é sempre a pasta da raiz: mudou lá, rode
-este script. O teste test_copias_iguais.py acusa cópia esquecida.
+o que está em python/). A fonte é sempre a raiz: mudou lá, rode este script.
+O teste test_copias_iguais acusa cópia esquecida. O LEIAME.md de dados/ vai
+junto porque diz a licença da tabela (CC BY-SA, que exige a atribuição).
 
 Uso: python ferramentas/sincronizar.py
 """
@@ -17,8 +18,8 @@ COPIAS = {
     RAIZ / "dados": [RAIZ / "python" / "src" / "veiculosbr" / "dados", RAIZ / "r" / "inst" / "extdata"],
     RAIZ / "casos": [RAIZ / "r" / "tests" / "testthat" / "casos"],
 }
-# O PyPI mostra o README que está dentro de python/.
-README_DO_PYTHON = (RAIZ / "README.md", RAIZ / "python" / "README.md")
+# O PyPI mostra o README que está dentro de python/, e o pacote leva a LICENSE de lá.
+ARQUIVOS_DO_PYTHON = ["README.md", "LICENSE"]
 
 
 def copiar_pasta(origem: Path, destino: Path) -> int:
@@ -26,7 +27,7 @@ def copiar_pasta(origem: Path, destino: Path) -> int:
         shutil.rmtree(destino)
     copiados = 0
     for arquivo in origem.rglob("*"):
-        if arquivo.is_file() and arquivo.name != "LEIAME.md":
+        if arquivo.is_file():
             alvo = destino / arquivo.relative_to(origem)
             alvo.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(arquivo, alvo)
@@ -39,5 +40,6 @@ if __name__ == "__main__":
         for destino in destinos:
             quantidade = copiar_pasta(origem, destino)
             print(f"{origem.name}/ -> {destino.relative_to(RAIZ)} ({quantidade} arquivos)")
-    shutil.copyfile(*README_DO_PYTHON)
-    print("README.md -> python/README.md")
+    for nome in ARQUIVOS_DO_PYTHON:
+        shutil.copyfile(RAIZ / nome, RAIZ / "python" / nome)
+        print(f"{nome} -> python/{nome}")

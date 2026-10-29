@@ -4,7 +4,7 @@
 \alias{fipe_candidatos}
 \title{Modelos da FIPE parecidos com marca e modelo}
 \source{
-\url{https://fipe.parallelum.com.br/api/v2}.
+A API pública do Parallelum (\url{https://fipe.parallelum.com.br}).
 }
 \usage{
 fipe_candidatos(

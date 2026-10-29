@@ -146,7 +146,7 @@ fipe_por_placa = function(placa, fontes = "tabelafipebrasil", conferir = TRUE,
 #' @param maximo_candidatos Quantos candidatos, no máximo.
 #' @param semelhanca_minima A nota mínima de semelhança (de 0 a 1).
 #' @return Um `data.frame` com as colunas de candidatos de [fipe_por_placa()].
-#' @source <https://fipe.parallelum.com.br/api/v2>.
+#' @source A API pública do Parallelum (<https://fipe.parallelum.com.br>).
 #' @examples
 #' \dontrun{
 #' fipe_candidatos("motos", "HONDA", "CG 150 JOB", 2005, "Gasolina")

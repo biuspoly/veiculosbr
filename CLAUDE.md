@@ -11,8 +11,8 @@ aceitas e recusadas, as dependências). O README é o que o usuário do pacote l
 ## Estrutura
 
 `casos/` (casos de teste em JSON + `respostas/` gravadas) e `dados/` (tabelas) são a fonte; `r/` e `python/`
-têm cópias. Mudou `casos/`, `dados/` ou o `README.md`: `python ferramentas/sincronizar.py` (um teste acusa
-cópia esquecida). `ferramentas/gerar_tabelas.py` refaz `dados/` pela Wikipédia.
+têm cópias. Mudou `casos/`, `dados/`, o `README.md` ou a `LICENSE`: `python ferramentas/sincronizar.py` (um
+teste acusa cópia esquecida). `ferramentas/gerar_tabelas.py` refaz `dados/` pela Wikipédia.
 
 Testar:
 - Python: `cd python && uv run pytest && uv run ruff check src tests ../ferramentas`

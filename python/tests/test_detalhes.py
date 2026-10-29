@@ -94,13 +94,13 @@ def test_tudo_exportado_existe():
 ])
 def test_copias_iguais(origem, copia):
     """Mudou dados/ ou casos/ e esqueceu de rodar ferramentas/sincronizar.py."""
-    arquivos_na_origem = sorted(arquivo.relative_to(origem) for arquivo in origem.rglob("*")
-                                if arquivo.is_file() and arquivo.name != "LEIAME.md")
+    arquivos_na_origem = sorted(arquivo.relative_to(origem) for arquivo in origem.rglob("*") if arquivo.is_file())
     arquivos_na_copia = sorted(arquivo.relative_to(copia) for arquivo in copia.rglob("*") if arquivo.is_file())
     assert arquivos_na_origem == arquivos_na_copia
     for arquivo in arquivos_na_origem:
         assert filecmp.cmp(origem / arquivo, copia / arquivo, shallow=False), arquivo
 
 
-def test_readme_do_python_igual_ao_da_raiz():
-    assert filecmp.cmp(RAIZ / "README.md", RAIZ / "python" / "README.md", shallow=False)
+@pytest.mark.parametrize("nome", ["README.md", "LICENSE"])
+def test_arquivo_do_python_igual_ao_da_raiz(nome):
+    assert filecmp.cmp(RAIZ / nome, RAIZ / "python" / nome, shallow=False)

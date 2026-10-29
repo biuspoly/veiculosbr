@@ -29,7 +29,8 @@ vem de um lugar:
 
 O cadastro da placa vem de sites que não são oficiais: se estiver errado ou desatualizado lá, vem errado aqui.
 A tabela de faixas por estado é a de janeiro de 2025; faixa distribuída depois disso dá "desconhecida" até a
-tabela ser refeita (`ferramentas/gerar_tabelas.py`). Detalhes e licença em [dados/LEIAME.md](dados/LEIAME.md).
+tabela ser refeita (`ferramentas/gerar_tabelas.py`). Detalhes e licença em
+[dados/LEIAME.md](https://github.com/biuspoly/veiculosbr/blob/main/dados/LEIAME.md).
 
 **Nada é gravado em disco: o pacote só consulta.** A mesma consulta feita de novo enquanto o R ou o Python
 estiver aberto sai da memória, sem voltar à internet; ao fechar, some.
@@ -49,13 +50,15 @@ gratuito; a busca por placa, 5 por **mês** sem token e 10 com ele, por isso só
 ## Instalar
 
 ```r
-# R (>= 4.1)
+# R (>= 4.1), do CRAN
+install.packages("veiculosbr")
+# ou a versão em desenvolvimento, do GitHub
 remotes::install_github("biuspoly/veiculosbr", subdir = "r")
 ```
 
 ```bash
-# Python (>= 3.10)
-pip install "git+https://github.com/biuspoly/veiculosbr#subdirectory=python"
+# Python (>= 3.10), do PyPI
+pip install veiculosbr
 ```
 
 ## Usar
@@ -150,4 +153,5 @@ vai à internet nem gasta cota: todos leem `casos/respostas/`.
 
 ## Licença
 
-MIT. A tabela de `dados/` deriva da Wikipédia (CC BY-SA 4.0): veja [dados/LEIAME.md](dados/LEIAME.md).
+MIT. A tabela de `dados/` deriva da Wikipédia (CC BY-SA 4.0): veja
+[dados/LEIAME.md](https://github.com/biuspoly/veiculosbr/blob/main/dados/LEIAME.md).

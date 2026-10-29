@@ -1,0 +1,7 @@
+O código do veiculosbr é de Marlon Hesly, sob a licença MIT (veja o arquivo LICENSE).
+
+A tabela inst/extdata/faixas_uf.csv é extraída da página "Vehicle registration plates of Brazil" da
+Wikipédia em inglês (https://en.wikipedia.org/wiki/Vehicle_registration_plates_of_Brazil), coletada em
+26/10/2026. O conteúdo da Wikipédia é publicado sob a licença CC BY-SA 4.0
+(https://creativecommons.org/licenses/by-sa/4.0/), e a tabela segue a mesma licença. Detalhes em
+inst/extdata/LEIAME.md.

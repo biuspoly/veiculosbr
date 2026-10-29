@@ -3,7 +3,9 @@ name = "veiculosbr"
 version = "0.1.0"
 description = "Placa (antiga e Mercosul), RENAVAM e preço FIPE, inclusive pela placa"
 readme = "README.md"
-license = "MIT"
+# O código é MIT; a tabela de faixas por estado (dados/faixas_uf.csv) vem da Wikipédia, CC BY-SA.
+license = "MIT AND CC-BY-SA-4.0"
+license-files = ["LICENSE", "src/veiculosbr/dados/LEIAME.md"]
 authors = [{ name = "Marlon Hesly", email = "marlonhesly@gmail.com" }]
 requires-python = ">=3.10"
 dependencies = [
@@ -19,6 +21,7 @@ classifiers = [
 
 [project.urls]
 Repository = "https://github.com/biuspoly/veiculosbr"
+Issues = "https://github.com/biuspoly/veiculosbr/issues"
 
 [project.scripts]
 veiculosbr = "veiculosbr.__main__:principal"

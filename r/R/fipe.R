@@ -35,7 +35,8 @@ CODIGO_DO_COMBUSTIVEL = c(GASOLINA = "1", FLEX = "1", ALCOOL = "2", ETANOL = "2"
 #' @return Um `data.frame`. Os de preço têm `codigo_fipe`, `marca`, `modelo`,
 #'   `ano_modelo`, `combustivel`, `preco` (em reais), `referencia` (o mês da
 #'   tabela) e `fonte`.
-#' @source <https://fipe.parallelum.com.br/api/v2>, que repete a tabela de
+#' @source A API pública do Parallelum (<https://fipe.parallelum.com.br>,
+#'   documentação em <https://fipe.api.br/docs/api>), que repete a tabela de
 #'   <https://veiculos.fipe.org.br>.
 #' @examples
 #' \dontrun{

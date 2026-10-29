@@ -9,7 +9,8 @@
 \alias{fipe_precos_da_marca}
 \title{Tabela FIPE pelo catálogo}
 \source{
-\url{https://fipe.parallelum.com.br/api/v2}, que repete a tabela de
+A API pública do Parallelum (\url{https://fipe.parallelum.com.br},
+documentação em \url{https://fipe.api.br/docs/api}), que repete a tabela de
 \url{https://veiculos.fipe.org.br}.
 }
 \usage{
