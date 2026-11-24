@@ -151,6 +151,10 @@ docs/        o plano e a origem do projeto
 Testes: `cd python && uv run pytest` e, no R, `R CMD build r` seguido de `R CMD check --as-cran`. Nenhum teste
 vai à internet nem gasta cota: todos leem `casos/respostas/`.
 
+## Autoria
+
+Desenvolvido por **[biuspoly](https://github.com/biuspoly)**, com ajuda do Claude (Anthropic).
+
 ## Licença
 
 MIT. A tabela de `dados/` deriva da Wikipédia (CC BY-SA 4.0): veja
